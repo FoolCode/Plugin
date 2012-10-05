@@ -68,19 +68,33 @@ class Event
 	 * Sets the priority
 	 *
 	 * @param int $priority
+	 * @return \Foolz\Plugin\Event
 	 */
 	public function setPriority($priority)
 	{
 		$this->priority = $priority;
+		return $this;
 	}
 
 	/**
-	 * The method or Closure to run
+	 * Gets the method or the Closure to run
+	 *
+	 * @return string|Callable
+	 */
+	public function getCall()
+	{
+		return $this->callable;
+	}
+
+	/**
+	 * Sets the method or Closure to run
 	 *
 	 * @param string|Closure $callable
+	 * @return \Foolz\Plugin\Event
 	 */
-	public function call($callable)
+	public function setCall($callable)
 	{
 		$this->callable = $callable;
+		return $this;
 	}
 }

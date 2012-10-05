@@ -2,7 +2,7 @@
 
 namespace Foolz\Plugin;
 
-class Base
+class Loader
 {
-	
+
 }

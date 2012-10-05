@@ -97,22 +97,17 @@ class Hook
 	 */
 	public function execute()
 	{
-		$events = Event::get($this->key);
+		$events = Event::getByKey($this->key);
 
 		$result = new Result($this->params, $this->object);
 
-		if ( ! count($events))
-		{
-			return $result;
-		}
-
 		foreach ($events as $event)
 		{
-			$closure = $event->getCallable();
+			$closure = $event->getCall();
 
 			$closure($result);
 		}
 
-		return new Event($this);
+		return $result;
 	}
 }
