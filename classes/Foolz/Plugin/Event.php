@@ -44,6 +44,17 @@ class Event
 	}
 
 	/**
+	 * Shorthand for the construct for PHP 5.3 to allow chaining
+	 *
+	 * @param string $key
+	 * @return \Foolz\Plugin\Event
+	 */
+	public static function forge($key)
+	{
+		return new static($key);
+	}
+
+	/**
 	 * Returns all the events ordered by ascending priority number
 	 *
 	 * @param string $key
@@ -62,6 +73,16 @@ class Event
 		usort($events, function($a, $b) { return $a->priority - $b->priority; });
 
 		return $events;
+	}
+
+	/**
+	 * Returns the priority
+	 *
+	 * @return int
+	 */
+	public function getPriority()
+	{
+		return $this->priority;
 	}
 
 	/**

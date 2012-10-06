@@ -44,7 +44,7 @@ class Hook
 	 * @param type $key
 	 * @return \Foolz\Plugin\Hook
 	 */
-	public function forge($key)
+	public static function forge($key)
 	{
 		return new static($key);
 	}
@@ -103,9 +103,13 @@ class Hook
 
 		foreach ($events as $event)
 		{
-			$closure = $event->getCall();
+			$call = $event->getCall();
 
-			$closure($result);
+			// users may not set the call, and that would be troubles
+			if ($call !== null)
+			{
+				call_user_func($call, $result);
+			}
 		}
 
 		return $result;

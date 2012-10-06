@@ -29,12 +29,19 @@ class Result
 	protected $object = null;
 
 	/**
+	 * The result
+	 *
+	 * @var mixed
+	 */
+	protected $result = null;
+
+	/**
 	 * Sets the parameters and in case it's available the object
 	 *
 	 * @param array $params
 	 * @param null|object $object
 	 */
-	public function __construct(array $params, $object = null)
+	public function __construct(array $params = array(), $object = null)
 	{
 		$this->params = $this->params_original = $params;
 		$this->object = $object;
@@ -111,7 +118,7 @@ class Result
 				throw new \OutOfBoundsException;
 			}
 
-			return $this->params_original;
+			return $this->params_original[$key];
 		}
 
 		if ( ! isset($this->params_original[$key]))
@@ -119,7 +126,7 @@ class Result
 			throw new \OutOfBoundsException;
 		}
 
-		return $this->params;
+		return $this->params[$key];
 	}
 
 	/**
