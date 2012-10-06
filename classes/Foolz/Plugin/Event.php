@@ -70,7 +70,7 @@ class Event
 		$events = static::$events[$key];
 
 		// sort by ascending priority
-		usort($events, function($a, $b) { return $a->priority - $b->priority; });
+		usort($events, function($a, $b) { return $a->getPriority() - $b->getPriority(); });
 
 		return $events;
 	}
