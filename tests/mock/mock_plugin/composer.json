@@ -1,8 +1,8 @@
 {
 	"name": "foolz/fake_plugin",
-	"type": "plugin",
+	"type": "foolz-plugin",
 	"description": "A fake plugin",
-	"keywords": ["fake"],
+	"keywords": ["fake", "mock"],
 	"homepage": "http://www.foolz.us",
 	"license": "Apache-2.0",
 	"authors": [{"name": "foolz", "email": "support@foolz.us"}],
@@ -11,18 +11,19 @@
 		"irc": "irc://irc.irchighway.net/fooldriver"
 	},
 
+	"require" : {
+		"foolz/plugin": "dev"
+	},
+
 	"autoload": {
 		"psr-0": {
 			"Foolz\\Fake" : "classes/"
 		}
 	},
 
-	"extra": {
-		"files": {
-			"bootstrap": "bootstrap.php",
-			"install": "install.php",
-			"remove": "remove.php",
-			"upgrade": "upgrade.php"
-		}
+	"scripts": {
+		"post-package-install": ["Foolz\\Plugin\\Composer::install"],
+		"post-package-update": ["Foolz\\Plugin\\Composer::update"],
+		"post-package-uninstall": ["Foolz\\Plugin\\Composer::uninstall"]
 	}
 }

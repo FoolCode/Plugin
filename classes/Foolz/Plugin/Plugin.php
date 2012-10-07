@@ -107,21 +107,7 @@ class Plugin
 	{
 		$config = $this->getJsonConfig();
 
-		$this->saveConfig($config);
-		return $this;
-	}
-
-	/**
-	 *
-	 * @param type $array
-	 * @return \Foolz\Plugin\Plugin
-	 */
-	public function saveConfig($array)
-	{
-		$content = "<?php \n".
-		"return ".var_export($array, true);
-
-		file_put_contents($this->getDir().'config.php', $content);
+		Util::saveArrayToFile($this->dir().'config.php', $config);
 		return $this;
 	}
 
@@ -135,14 +121,6 @@ class Plugin
 	 */
 	public function getConfig($section = null, $fallback = null)
 	{
-		$throw = false;
-
-		// if the user doesn't pass the fallback it must throw an exception if the value is not found
-		if (func_num_args() !== 2)
-		{
-			$throw = true;
-		}
-
 		$php_file = $this->getDir().'config.php';
 
 		if (file_exists($php_file) === false)
@@ -157,25 +135,13 @@ class Plugin
 			return $config;
 		}
 
-		// get the section with the dot separated string
-		$sections = explode('.', $section);
-		$current = $config;
-		foreach ($sections as $key)
+		// if there wasn't an actual fallback set
+		if (func_num_args() !== 2)
 		{
-			if (isset($current[$key]))
-			{
-				$current = $current[$key];
-			}
-			else
-			{
-				if ($throw)
-				{
-					throw new \DomainException;
-				}
-
-				return $fallback;
-			}
+			return Util::dottedConfig($config, $section, new Void);
 		}
+
+		return Util::dottedConfig($config, $section, $fallback);
 	}
 
 	/**

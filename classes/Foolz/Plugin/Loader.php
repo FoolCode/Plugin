@@ -14,7 +14,7 @@ class Loader
 	/**
 	 * Files to delete on class destruct
 	 *
-	 * @var type
+	 * @var array
 	 */
 	protected $to_delete = array();
 
@@ -134,7 +134,7 @@ class Loader
 	 * @return void|bool
 	 * @throws \OutOfBoundsException if the class doesn't exist
 	 */
-	public function classLoader($class)
+	public function classLoader($class, $psr = false)
 	{
 		if (isset($this->classes[$class]))
 		{
@@ -278,6 +278,7 @@ class Loader
 	 *
 	 * @param string $dir_name
 	 * @param string $slug
+	 * @return \Foolz\Plugin\Plugin
 	 */
 	public function getPlugin($dir_name, $slug)
 	{
@@ -323,20 +324,20 @@ class Loader
 		$zip->extractTo($base_path.'extracted/');
 		$zip->close();
 
-		if ( ! file_exists($base_path.'extracted/config.json'))
+		if ( ! file_exists($base_path.'extracted/composer.json'))
 		{
 			throw new \UnexpectedValueException;
 		}
 
 		// use the slug defined in the package to make sure it goes in the correct folder
-		$json = json_decode($base_path.'extracted/config.json', true);
+		$json = json_decode($base_path.'extracted/composer.json', true);
 
-		if ( ! isset($json['slug']))
+		if ( ! isset($json['name']))
 		{
 			throw new \UnexpectedValueException;
 		}
 
-		copy($base_path.'extracted/', $this->dirs[$dir_name].$json['slug'].DIRECTORY_SEPARATOR);
+		copy($base_path.'extracted/', $this->dirs[$dir_name].$json['name'].DIRECTORY_SEPARATOR);
 
 		$this->flushDir($base_path);
 		unlink($base_path);
