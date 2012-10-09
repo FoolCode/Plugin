@@ -130,7 +130,7 @@ class Hook
 	{
 		$result = new Result($this->params, $this->object);
 
-		if ( ! in_array($this->key, static::$disabled))
+		if (in_array($this->key, static::$disabled))
 		{
 			return $result;
 		}
