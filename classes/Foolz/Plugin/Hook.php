@@ -4,6 +4,10 @@ namespace Foolz\Plugin;
 
 /**
  * The Hook that runs the events appended to it
+ *
+ * @author Foolz <support@foolz.us>
+ * @package Foolz\Plugin
+ * @license http://www.apache.org/licenses/LICENSE-2.0.html Apache License 2.0
  */
 class Hook
 {
@@ -24,9 +28,16 @@ class Hook
 	/**
 	 * The parameters to pass to the
 	 *
-	 * @var type
+	 * @var array
 	 */
 	protected $params = array();
+
+	/**
+	 * The disabled keys
+	 *
+	 * @var array
+	 */
+	protected static $disabled = array();
 
 	/**
 	 * Takes a hook key
@@ -47,6 +58,26 @@ class Hook
 	public static function forge($key)
 	{
 		return new static($key);
+	}
+
+	/**
+	 * Enables the Hook key if it was disabled
+	 *
+	 * @param string $key
+	 */
+	public static function enable($key)
+	{
+		static::$disabled = array_diff(static::$disabled, array($key));
+	}
+
+	/**
+	 * Disable the Hook key
+	 *
+	 * @param string $key
+	 */
+	public static function disable($key)
+	{
+		static::$disabled[] = $key;
 	}
 
 	/**
@@ -97,9 +128,14 @@ class Hook
 	 */
 	public function execute()
 	{
-		$events = Event::getByKey($this->key);
-
 		$result = new Result($this->params, $this->object);
+
+		if ( ! in_array($this->key, static::$disabled))
+		{
+			return $result;
+		}
+
+		$events = Event::getByKey($this->key);
 
 		foreach ($events as $event)
 		{

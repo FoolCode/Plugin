@@ -19,11 +19,5 @@
 		"psr-0": {
 			"Foolz\\Fake" : "classes/"
 		}
-	},
-
-	"scripts": {
-		"post-package-install": ["Foolz\\Plugin\\Composer::install"],
-		"post-package-update": ["Foolz\\Plugin\\Composer::update"],
-		"post-package-uninstall": ["Foolz\\Plugin\\Composer::uninstall"]
 	}
 }

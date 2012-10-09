@@ -2,6 +2,13 @@
 
 namespace Foolz\Plugin;
 
+/**
+ * Holds data on a plugin package
+ *
+ * @author Foolz <support@foolz.us>
+ * @package Foolz\Plugin
+ * @license http://www.apache.org/licenses/LICENSE-2.0.html Apache License 2.0
+ */
 class Plugin
 {
 	/**
@@ -19,9 +26,16 @@ class Plugin
 	protected $dir;
 
 	/**
-	 * The config of the plugin
+	 * Loaded JSON config
 	 *
-	 * @var array
+	 * @var null|array
+	 */
+	protected $json_config = null;
+
+	/**
+	 * Loaded PHP config
+	 *
+	 * @var null|array
 	 */
 	protected $config = null;
 
@@ -33,7 +47,7 @@ class Plugin
 	public function __construct(\Foolz\Plugin\Loader $loader, $dir)
 	{
 		$this->loader = $loader;
-		$this->dir = $dir;
+		$this->dir = rtrim($dir,'/').'/';
 	}
 
 	/**
@@ -55,15 +69,6 @@ class Plugin
 	}
 
 	/**
-	 * Runs the bootstrap of the plugin
-	 */
-	public function execute()
-	{
-		$bootstrap = $this->getConfig('files.bootstrap');
-		include $this->getDir().$bootstrap;
-	}
-
-	/**
 	 * Adds a class for the autoloader
 	 *
 	 * @param string $class
@@ -79,23 +84,37 @@ class Plugin
 	/**
 	 * Gets the content of the config.json of the plugin
 	 */
-	public function getJsonConfig()
+	public function getJsonConfig($section = null, $fallback = null)
 	{
-		$file = $this->getDir().'config.json';
-
-		if ( ! file_exists($file))
+		if ($this->json_config === null)
 		{
-			throw new \DomainException;
+			$file = $this->getDir().'composer.json';
+
+			if ( ! file_exists($file))
+			{
+				throw new \DomainException;
+			}
+
+			$this->json_config = json_decode(file_get_contents($file), true);
+
+			if ($this->json_config === null)
+			{
+				throw new \DomainException;
+			}
 		}
 
-		$config = json_decode($file, true);
-
-		if ($config === null)
+		if ($section === null)
 		{
-			throw new \DomainException;
+			return $this->json_config;
 		}
 
-		return $config;
+		// if there wasn't an actual fallback set
+		if (func_num_args() !== 2)
+		{
+			return Util::dottedConfig($this->json_config, $section, new Void);
+		}
+
+		return Util::dottedConfig($this->json_config, $section, $fallback);
 	}
 
 	/**
@@ -107,7 +126,7 @@ class Plugin
 	{
 		$config = $this->getJsonConfig();
 
-		Util::saveArrayToFile($this->dir().'config.php', $config);
+		Util::saveArrayToFile($this->getDir().'config.php', $config);
 		return $this;
 	}
 
@@ -121,71 +140,148 @@ class Plugin
 	 */
 	public function getConfig($section = null, $fallback = null)
 	{
-		$php_file = $this->getDir().'config.php';
-
-		if (file_exists($php_file) === false)
+		if ($this->config === null)
 		{
-			$this->jsonToConfig();
-		}
+			$php_file = $this->getDir().'config.php';
 
-		$config = include $php_file;
+			if (file_exists($php_file) === false)
+			{
+				$this->jsonToConfig();
+			}
+
+			$this->config = include $php_file;
+		}
 
 		if ($section === null)
 		{
-			return $config;
+			return $this->config;
 		}
 
 		// if there wasn't an actual fallback set
 		if (func_num_args() !== 2)
 		{
-			return Util::dottedConfig($config, $section, new Void);
+			return Util::dottedConfig($this->config, $section, new Void);
 		}
 
-		return Util::dottedConfig($config, $section, $fallback);
+		return Util::dottedConfig($this->config, $section, $fallback);
+	}
+
+	/**
+	 * Destroys the config.php to recreate it from the composer.json
+	 */
+	public function refreshConfig()
+	{
+		if (file_exists($this->getDir().'config.php'))
+		{
+			unlink($this->getDir().'config.php');
+		}
+	}
+
+	public function clearJsonConfig()
+	{
+		$this->json_config = null;
+	}
+
+	public function clearConfig()
+	{
+		$this->config = null;
+	}
+
+	/**
+	 * Runs the bootstrap file
+	 *
+	 * @return  \Foolz\Plugin\Plugin
+	 */
+	public function bootstrap()
+	{
+		include $this->getDir().'bootstrap.php';
+		return $this;
+	}
+
+	/**
+	 * Runs the execution block
+	 *
+	 * @return  \Foolz\Plugin\Plugin
+	 */
+	public function execute()
+	{
+		// clear the hook since we might have an old one
+		\Foolz\Plugin\Event::clear('foolz\plugin\plugin.execute.'.$this->getJsonConfig('name'));
+
+		$this->bootstrap();
+		\Foolz\Plugin\Hook::forge('foolz\plugin\plugin.execute.'.$this->getJsonConfig('name'))
+			->setObject($this)
+			->execute();
+
+		return $this;
 	}
 
 	/**
 	 * Triggers the install methods for the plugin
+	 *
+	 * @return  \Foolz\Plugin\Plugin
 	 */
 	public function install()
 	{
-		$install = $this->getConfig('files.install', false);
+		// clear the hook since we might have an old one
+		\Foolz\Plugin\Event::clear('foolz\plugin\plugin.install.'.$this->getJsonConfig('name'));
 
-		if ($install === false)
-		{
-			return;
-		}
+		// execute the bootstrap to get the events instantiated
+		$this->bootstrap();
+		\Foolz\Plugin\Hook::forge('foolz\plugin\plugin.install.'.$this->getJsonConfig('name'))
+			->setObject($this)
+			->execute();
 
-		include $this->getDir().$install;
+		return $this;
 	}
 
 	/**
 	 * Triggers the remove methods for the plugin
+	 *
+	 * @return  \Foolz\Plugin\Plugin
 	 */
 	public function remove()
 	{
-		$remove = $this->getConfig('files.remove', false);
+		// clear the hook since we might have an old one
+		\Foolz\Plugin\Event::clear('foolz\plugin\plugin.remove.'.$this->getJsonConfig('name'));
 
-		if ($remove === false)
-		{
-			return;
-		}
+		// execute the bootstrap to get the events instantiated
+		$this->bootstrap();
+		\Foolz\Plugin\Hook::forge('foolz\plugin\plugin.remove.'.$this->getJsonConfig('name'))
+			->setObject($this)
+			->execute();
 
-		include $this->getDir().$remove;
+		return $this;
 	}
 
 	/**
-	 * Triggers the upgrade methods for the plugin
+	 * Triggers the upgrade methods for the plugin. At this point the files have already changed..
+	 *
+	 * @return  \Foolz\Plugin\Plugin
 	 */
 	public function upgrade()
 	{
-		$upgrade = $this->getConfig('files.upgrade', false);
+		// clear the json data so we use the latest
+		$this->clearJsonConfig();
 
-		if ($upgrade === false)
-		{
-			return;
-		}
+		// clear the hook since we for sure have an old one
+		\Foolz\Plugin\Event::clear('foolz\plugin\plugin.upgrade.'.$this->getJsonConfig('name'));
 
-		include $this->getDir().$upgrade;
+		// execute the bootstrap to get the events re-instantiated
+		$this->bootstrap();
+
+		// run the event
+		\Foolz\Plugin\Hook::forge('foolz\plugin\plugin.upgrade.'.$this->getJsonConfig('name'))
+			->setObject($this)
+			// the PHP config holds the old revision
+			->setParam('old_revision', $this->getConfig('extra.revision', 0))
+			// the JSON config holds the new revision
+			->setParam('new_revision', $this->getJsonConfig('extra.revision', 0))
+			->execute();
+
+		// update the PHP config file so it has the new revision
+		$this->refreshConfig();
+
+		return $this;
 	}
 }

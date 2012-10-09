@@ -2,6 +2,13 @@
 
 namespace Foolz\Plugin;
 
+/**
+ * Automates loading of plugins, download and removal
+ *
+ * @author Foolz <support@foolz.us>
+ * @package Foolz\Plugin
+ * @license http://www.apache.org/licenses/LICENSE-2.0.html Apache License 2.0
+ */
 class Loader
 {
 	/**
@@ -79,7 +86,7 @@ class Loader
 	/**
 	 * Removes the files tagged for deletion
 	 */
-	protected function __destruct()
+	public function __destruct()
 	{
 		foreach ($this->to_delete as $delete)
 		{
@@ -231,7 +238,7 @@ class Loader
 					continue;
 				}
 
-				$filepath = $path.'/'.$file;
+				$filepath = $dir.'/'.$file;
 
 				if (is_dir($filepath))
 				{
@@ -279,6 +286,7 @@ class Loader
 	 * @param string $dir_name
 	 * @param string $slug
 	 * @return \Foolz\Plugin\Plugin
+	 * @throws \OutOfBoundsException
 	 */
 	public function getPlugin($dir_name, $slug)
 	{
@@ -290,6 +298,18 @@ class Loader
 		}
 
 		return $plugins[$dir_name][$slug];
+	}
+
+
+	public function refreshConfigs()
+	{
+		foreach ($this->getPlugins() as $dir_name => $plugins)
+		{
+			foreach ($plugins as $slug => $plugin)
+			{
+				$plugin->refreshConfig();
+			}
+		}
 	}
 
 	/**

@@ -4,6 +4,10 @@ namespace Foolz\Plugin;
 
 /**
  * The result that is cascaded through events on the same key and returned by the hook
+ *
+ * @author Foolz <support@foolz.us>
+ * @package Foolz\Plugin
+ * @license http://www.apache.org/licenses/LICENSE-2.0.html Apache License 2.0
  */
 class Result
 {
@@ -45,6 +49,7 @@ class Result
 	{
 		$this->params = $this->params_original = $params;
 		$this->object = $object;
+		$this->result = new Void();
 	}
 
 	/**
@@ -52,8 +57,13 @@ class Result
 	 *
 	 * @return mixed
 	 */
-	public function get()
+	public function get($fallback = null)
 	{
+		if ($this->result instanceof Void && func_num_args() === 1)
+		{
+			return $fallback;
+		}
+
 		return $this->result;
 	}
 
