@@ -14,36 +14,36 @@ class Result
 	/**
 	 * The parameters (which can be modified with setParam())
 	 *
-	 * @var array as key the parameter key
+	 * @var  array  Array with as keys the parameter key
 	 */
 	protected $params = array();
 
 	/**
 	 * The original parameters (can't be modified)
 	 *
-	 * @var array as key the parameter key
+	 * @var  array  Array with as key the parameter key
 	 */
 	protected $params_original = array();
 
 	/**
 	 * The object in which the Hook runs
 	 *
-	 * @var object
+	 * @var  object
 	 */
 	protected $object = null;
 
 	/**
 	 * The result
 	 *
-	 * @var mixed
+	 * @var  mixed
 	 */
 	protected $result = null;
 
 	/**
 	 * Sets the parameters and in case it's available the object
 	 *
-	 * @param array $params
-	 * @param null|object $object
+	 * @param  array        $params
+	 * @param  null|object  $object
 	 */
 	public function __construct(array $params = array(), $object = null)
 	{
@@ -55,7 +55,7 @@ class Result
 	/**
 	 * Returns the result
 	 *
-	 * @return mixed
+	 * @return  mixed
 	 */
 	public function get($fallback = null)
 	{
@@ -70,8 +70,8 @@ class Result
 	/**
 	 * Sets the result
 	 *
-	 * @param type $val
-	 * @return \Foolz\Plugin\Result
+	 * @param   mixed  $val
+	 * @return  \Foolz\Plugin\Result
 	 */
 	public function set($val)
 	{
@@ -82,8 +82,8 @@ class Result
 	/**
 	 * Returns the object from
 	 *
-	 * @return mixed the object
-	 * @throws \OutOfBoundsException if there's no object
+	 * @return   mixed  the object
+	 * @throws   \OutOfBoundsException if there's no object
 	 */
 	public function getObject()
 	{
@@ -98,8 +98,8 @@ class Result
 	/**
 	 * Returns the array of parameters
 	 *
-	 * @param bool $orig whether we want the original array of parameters
-	 * @return array
+	 * @param   bool  $orig  whether we want the original array of parameters
+	 * @return  array
 	 */
 	public function getParams($orig = false)
 	{
@@ -114,10 +114,10 @@ class Result
 	/**
 	 * Returns the parameter with the key
 	 *
-	 * @param string $key
-	 * @param bool $orig whether we want the original value of the parameter
-	 * @return mixed
-	 * @throws \OutOfBoundsException if the key is not set
+	 * @param   string  $key
+	 * @param   bool    $orig whether we want the original value of the parameter
+	 * @return  mixed
+	 * @throws  \OutOfBoundsException if the key is not set
 	 */
 	public function getParam($key, $orig = false)
 	{
@@ -142,9 +142,9 @@ class Result
 	/**
 	 * Updates a parameter
 	 *
-	 * @param string $key
-	 * @param mixed $value
-	 * @return \Foolz\Plugin\Result
+	 * @param   string  $key
+	 * @param   mixed   $value
+	 * @return  \Foolz\Plugin\Result
 	 */
 	public function setParam($key, $value)
 	{

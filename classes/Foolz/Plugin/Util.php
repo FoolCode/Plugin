@@ -15,11 +15,11 @@ class Util
 	/**
 	 * Returns the value of a deep associative array by using a dotted notation for the keys
 	 *
-	 * @param  array   $config    The config file to fetch the value from
-	 * @param  string  $section   The dotted keys: akey.anotherkey.key
-	 * @param  mixed   $fallback  The fallback value
+	 * @param   array   $config    The config file to fetch the value from
+	 * @param   string  $section   The dotted keys: akey.anotherkey.key
+	 * @param   mixed   $fallback  The fallback value
 	 * @return  mixed
-	 * @throws \DomainException if the fallback is \Foolz\Plugin\Void
+	 * @throws  \DomainException  if the fallback is \Foolz\Plugin\Void
 	 */
 	public static function dottedConfig($config, $section, $fallback)
 	{
@@ -49,9 +49,9 @@ class Util
 	/**
 	 * Saves an array to a PHP file with a return statement
 	 *
-	 * @param  string  $path   The target path
-	 * @param  array   $array  The array to save
-	 * @return \Foolz\Plugin\Plugin
+	 * @param   string  $path   The target path
+	 * @param   array   $array  The array to save
+	 * @return  \Foolz\Plugin\Plugin
 	 */
 	public static function saveArrayToFile($path, $array)
 	{

@@ -83,6 +83,11 @@ class Loader
 		return static::$instances[$instance];
 	}
 
+	/**
+	 * Destroys a named instance and unregisters its autoloader
+	 *
+	 * @param  string  $instance
+	 */
 	public static function destroy($instance = 'default')
 	{
 		$obj = static::$instances[$instance];
@@ -162,9 +167,10 @@ class Loader
 	/**
 	 * Adds a directory to the array of directories to search plugins in
 	 *
-	 * @param  string       $dir_name  if $dir is not set this sets both the name and the dir equal
-	 * @param  null|string  $dir       the dir where to look for plugins
-	 * @return \Foolz\Plugin\Loader
+	 * @param   string       $dir_name  if $dir is not set this sets both the name and the dir equal
+	 * @param   null|string  $dir       the dir where to look for plugins
+	 * @return  \Foolz\Plugin\Loader
+	 * @throws  \DomainException  if the directory is not found
 	 */
 	public function addDir($dir_name, $dir = null)
 	{
@@ -237,6 +243,12 @@ class Loader
 		}
 	}
 
+	/**
+	 * Internal function to find all directories at the path
+	 *
+	 * @param   string  $path
+	 * @return  array   the paths with as they the last part of the path
+	 */
 	protected function findDirs($path)
 	{
 		$result = array();
@@ -266,7 +278,7 @@ class Loader
 	 *
 	 * @param   null|string  $dir_name  if specified it gets only a group of plugins
 	 * @return  array
-	 * @throws  \OutOfBoundsException
+	 * @throws  \OutOfBoundsException  if there isn't such a $dir_name set
 	 */
 	public function getPlugins($dir_name = null)
 	{
@@ -294,7 +306,7 @@ class Loader
 	 * @param   string  $dir_name
 	 * @param   string  $slug
 	 * @return  \Foolz\Plugin\Plugin
-	 * @throws  \OutOfBoundsException
+	 * @throws  \OutOfBoundsException  if the plugin doesn't exist
 	 */
 	public function getPlugin($dir_name, $slug)
 	{

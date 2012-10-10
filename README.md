@@ -5,22 +5,29 @@ A very complete plugin system to let you claim that your application supports pl
 
 You will need PHP 5.3 for this to work. You can install it through composer.
 
-## What doesn't it do
+[![Build Status](https://secure.travis-ci.org/FoolRulez/Plugin.png)](http://travis-ci.org/FoolRulez/Plugin)
 
-* It doesn't give an administration panel, just the API to manage the plugins
-* You must load the plugins early in your application yourself (`->executeAll()` if you're lazy).
+## Components
 
-## What does it do!
+* __Hooks__
+	Place them in your code to execute events. Unlike several other packages, these Hooks allow interacting with the data and returning new values.
+* __Events__
+	The events happen when a Hook with the same key is encountered. Events accept static methods and Closures, as well as a priority, because _you can stack them and have them passing variables to each other_.
+* __Result__
+	The object that Hooks and Events share, and return. They keep your code clean from mysterious function parameters and even more confusing return values.
+* __Plugin__
+	The internal package handler. _Plugins are actually Composer packages._ Use the bootstrap file to create new events and use the install/uninstall/upgrade system. Read the composer file with the config functions.
+* __Loader__
+	The packages utility. It looks into the folders you tell it to, finds plugins, loads them and gives you the array.
 
-##### Hooks and Events
+What will you have to do? You must use the Loader class to create your own administration panel and run the plugins you choose to run. Since it doesn't have any database bind (or any dependency at all), you must create an enabled/disabled system yourself.
 
-Hooks are placed in your code where you want an Event to run.
+Some examples follow.
 
-You can have multiple events running on the same hook, and they will cascade correctly with their priority number
+## Hooks and Events
 
-To interact with the result, you will use the Result methods.
+The most basic part of the package. You can use Hook and Event anywhere in your code, not only in the plugins.
 
-Example:
 ```php
 <?php
 
@@ -28,29 +35,29 @@ use \Foolz\Plugin\Hook as Hook;
 use \Foolz\Plugin\Event as Event;
 
 // define an Event
-(new Event('triggerOnThis'))->setCall(function($result){
+Event::forge('triggerOnThis')->setCall(function($result){
 	$result->set(123);
 })->priority(2);
 
 // the Hook triggers it
-$result = (new Hook('triggerOnThis'))->execute();
+$result = Hook::forge('triggerOnThis')->execute();
 
 // echoes 123
 echo $result->get();
 ```
 
-Notice that if you can't use the PHP 5.4 concatenation on instantiation, you can use the `Event::forge()` and `Hook::forge()` static methods instead, that do exactly the same.
+## Result
 
-##### Result
+We coded the result package to avoid confusion with cascading Events. This is why Events only get one parameter, that we use to call `$result`.
 
-The Result is passed to Events as only parameter. It contains the associative array of parameters set by the hook and the result.
+As this is where most of the mistakes are made, like fetching parameters that haven't been set, any unset parameter fetched or unset result without explicit fallback will cause an exception.
 
 Example:
 ```php
 <?php
 
 // define an Event
-(new Event('triggerOnThis'))->setCall(function($result){
+Event::forge('triggerOnThis')->setCall(function($result){
 	$increment = $result->getParam('increment')
 	$increment++;
 	$result->setParam($increment);
@@ -58,14 +65,14 @@ Example:
 });
 
 // define another Event editing the parameters with lower priority (lower number is higher priority, default is 5)
-(new Event('triggerOnThis'))->setCall(function($result){
+Event::forge('triggerOnThis')->setCall(function($result){
 	$increment = $result->getParam('increment')
 	$increment++;
 	$result->set($increment);
 })->priority(8);
 
 // the Hook triggers it
-$result = (new Hook('triggerOnThis'))
+$result = Hook::forge('triggerOnThis')
 	->setParam('increment', 0)
 	->execute();
 
@@ -78,14 +85,25 @@ echo $result->getParam('increment');
 
 ## Plugins
 
-A plugin system wouldn't have a meaning without the portable packages that modify how the system works.
+The folder structure must be: `plugins_folder/vendor_name/plugin_name`.
 
-The plugin system is composed by a Loader class and Plugin class. In short, do the following to run your plugins (selectively):
+A plugin is made of at least one file: the composer.json file. That is right: __the configuration file is a composer.json file__. You can add any extra information you need in the [extra fields](http://getcomposer.org/doc/04-schema.md#extra), like in example a pretty `name` for the plugin.
+
+The other file you really want is the `bootstrap.php` file. In the bootstrap you will have four events to add:
+
+* `\foolz\plugin\plugin.execute.vendor_name/plugin_name`
+* `\foolz\plugin\plugin.install.vendor_name/plugin_name`
+* `\foolz\plugin\plugin.uninstall.vendor_name/plugin_name`
+* `\foolz\plugin\plugin.update.vendor_name/plugin_name`
+
+The last one sets two parameters: `old_revision` and `new_revision`. These are based on the eventual `extra.revision`, and should be used to manage migrations.
+
+Here's an example of how would you load the plugins you choose to run:
 
 ```php
 <?php
 
-$loader = new Loader()->setDir('main', '/path/to/plugins/');
+$loader = Loader::forge()->setDir('main', '/path/to/plugins/');
 
 $enabled_plugins = array('banners', 'skynet');
 
@@ -97,5 +115,3 @@ foreach ($loader->getPlugins('main') as $plugin)
 	}
 }
 ```
-
-The Loader class is of course meant to be used with your administration system to create a dynamic system where you can install, enable, disable, remove and upgrade the plugins.

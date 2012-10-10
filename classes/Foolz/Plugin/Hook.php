@@ -14,35 +14,35 @@ class Hook
 	/**
 	 * The hook key
 	 *
-	 * @var null|string
+	 * @var  null|string
 	 */
 	protected $key = null;
 
 	/**
 	 * The object the hook has been placed in, if any
 	 *
-	 * @var null|object
+	 * @var  null|object
 	 */
 	protected $object = null;
 
 	/**
 	 * The parameters to pass to the
 	 *
-	 * @var array
+	 * @var  array
 	 */
 	protected $params = array();
 
 	/**
 	 * The disabled keys
 	 *
-	 * @var array
+	 * @var  array
 	 */
 	protected static $disabled = array();
 
 	/**
 	 * Takes a hook key
 	 *
-	 * @param string $key
+	 * @param  string  $key
 	 */
 	public function __construct($key)
 	{
@@ -52,8 +52,8 @@ class Hook
 	/**
 	 * Shorthand for PHP5.3 to concatenate on constructor
 	 *
-	 * @param type $key
-	 * @return \Foolz\Plugin\Hook
+	 * @param   string  $key
+	 * @return  \Foolz\Plugin\Hook
 	 */
 	public static function forge($key)
 	{
@@ -63,7 +63,7 @@ class Hook
 	/**
 	 * Enables the Hook key if it was disabled
 	 *
-	 * @param string $key
+	 * @param  string  $key
 	 */
 	public static function enable($key)
 	{
@@ -73,7 +73,7 @@ class Hook
 	/**
 	 * Disable the Hook key
 	 *
-	 * @param string $key
+	 * @param  string  $key
 	 */
 	public static function disable($key)
 	{
@@ -83,8 +83,8 @@ class Hook
 	/**
 	 * Sets the object the hook has been placed in
 	 *
-	 * @param object $object
-	 * @return \Foolz\Plugin\Hook
+	 * @param   object  $object
+	 * @return  \Foolz\Plugin\Hook
 	 */
 	public function setObject($object)
 	{
@@ -95,9 +95,9 @@ class Hook
 	/**
 	 * Sets a parameter that will be passed to the events
 	 *
-	 * @param string $key
-	 * @param mixed $value
-	 * @return \Foolz\Plugin\Hook
+	 * @param   string  $key
+	 * @param   mixed   $value
+	 * @return  \Foolz\Plugin\Hook
 	 */
 	public function setParam($key, $value)
 	{
@@ -108,8 +108,8 @@ class Hook
 	/**
 	 * Set bulks of parameters
 	 *
-	 * @param array $arr
-	 * @return \Foolz\Plugin\Hook
+	 * @param   array  $arr
+	 * @return  \Foolz\Plugin\Hook
 	 */
 	public function setParams(array $arr)
 	{
@@ -124,7 +124,7 @@ class Hook
 	/**
 	 * Executes the hook and cascades through all the events
 	 *
-	 * @return \Foolz\Plugin\Result
+	 * @return  \Foolz\Plugin\Result
 	 */
 	public function execute()
 	{

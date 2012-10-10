@@ -58,8 +58,8 @@ class Plugin
 	/**
 	 * Sets a loader to use the relative
 	 *
-	 * @param \Foolz\Plugin\Loader $loader
-	 * @return \Foolz\Plugin\Plugin
+	 * @param   \Foolz\Plugin\Loader  $loader
+	 * @return  \Foolz\Plugin\Plugin
 	 */
 	public function setLoader(\Foolz\Plugin\Loader $loader)
 	{
@@ -70,7 +70,7 @@ class Plugin
 	/**
 	 * Gets the loader that created this object
 	 *
-	 * @return \Foolz\Plugin\Loader
+	 * @return  \Foolz\Plugin\Loader
 	 */
 	public function getLoader()
 	{
@@ -79,6 +79,8 @@ class Plugin
 
 	/**
 	 * Gets the path to the plugin
+	 *
+	 * @return  string
 	 */
 	public function getDir()
 	{
@@ -88,9 +90,9 @@ class Plugin
 	/**
 	 * Adds a class for the autoloader
 	 *
-	 * @param string $class
-	 * @param string $dir
-	 * @return \Foolz\Plugin\Plugin
+	 * @param   string  $class
+	 * @param   string  $dir
+	 * @return  \Foolz\Plugin\Plugin
 	 */
 	public function addClass($class, $dir)
 	{
@@ -99,7 +101,12 @@ class Plugin
 	}
 
 	/**
-	 * Gets the content of the config.json of the plugin
+	 * Gets the content of the composer.json
+	 *
+	 * @param   string  $section  keys of the array separated by dots
+	 * @param   mixed   $fallback
+	 * @return  mixed
+	 * @throws  \DomainException  if there is no such config item and there was no fallback set
 	 */
 	public function getJsonConfig($section = null, $fallback = null)
 	{
@@ -140,7 +147,7 @@ class Plugin
 	/**
 	 * Converts the JSON to a PHP config to improve speed
 	 *
-	 * @return \Foolz\Plugin\Plugin
+	 * @return  \Foolz\Plugin\Plugin
 	 */
 	public function jsonToConfig()
 	{
@@ -153,10 +160,10 @@ class Plugin
 	/**
 	 * Gets the content of the config
 	 *
-	 * @param type $section
-	 * @param type $fallback
-	 * @return type
-	 * @throws \DomainException
+	 * @param   string  $section  keys of the array separated by dots
+	 * @param   mixed   $fallback
+	 * @return  mixed
+	 * @throws  \DomainException  if there is no such config item and there was no fallback set
 	 */
 	public function getConfig($section = null, $fallback = null)
 	{
@@ -188,6 +195,8 @@ class Plugin
 
 	/**
 	 * Destroys the config.php to recreate it from the composer.json
+	 *
+	 * @return  \Foolz\Plugin\Plugin
 	 */
 	public function refreshConfig()
 	{
@@ -198,12 +207,13 @@ class Plugin
 
 		$this->clearJsonConfig();
 		$this->clearConfig();
+		return $this;
 	}
 
 	/**
 	 * Clears the json_config variable to reload from JSON
 	 *
-	 * @return \Foolz\Plugin\Plugin
+	 * @return  \Foolz\Plugin\Plugin
 	 */
 	public function clearJsonConfig()
 	{
@@ -214,7 +224,7 @@ class Plugin
 	/**
 	 * Clears the config variable to reload from config.php
 	 *
-	 * @return \Foolz\Plugin\Plugin
+	 * @return  \Foolz\Plugin\Plugin
 	 */
 	public function clearConfig()
 	{
@@ -271,7 +281,7 @@ class Plugin
 	}
 
 	/**
-	 * Triggers the remove methods for the plugin
+	 * Triggers the remove methods for the plugin. Doesn't remove the files.
 	 *
 	 * @return  \Foolz\Plugin\Plugin
 	 */
@@ -290,7 +300,9 @@ class Plugin
 	}
 
 	/**
-	 * Triggers the upgrade methods for the plugin. At this point the files have already changed..
+	 * Triggers the upgrade methods for the plugin. At this point the files MUST have changed.
+	 * It will give two parameters to the Event: old_revision and new_revision, which are previous and new value
+	 * for extra.revision in the composer.json. These can be used to determine which actions to undertake.
 	 *
 	 * @return  \Foolz\Plugin\Plugin
 	 */
