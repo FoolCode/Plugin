@@ -3,6 +3,7 @@
 Place these in your code. When a Hook and an Event share the key, the Event will run.
 
 Full example:
+```php
 <?php
 	$result = Hook::forge('the_hook_key')
 		->setObject($this)
