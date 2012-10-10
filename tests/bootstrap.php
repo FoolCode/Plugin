@@ -8,3 +8,4 @@ require_once '../classes/Foolz/Plugin/Result.php';
 require_once '../classes/Foolz/Plugin/Void.php';
 require_once '../classes/Foolz/Plugin/Loader.php';
 require_once '../classes/Foolz/Plugin/Plugin.php';
+require_once '../classes/Foolz/Plugin/Util.php';

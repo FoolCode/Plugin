@@ -42,12 +42,29 @@ class Plugin
 	/**
 	 * Gets the instance of the loader
 	 *
-	 * @param type $loader
+	 * @param  string  $dir The path to the plugin
 	 */
-	public function __construct(\Foolz\Plugin\Loader $loader, $dir)
+	public function __construct($dir)
+	{
+		$dir = rtrim($dir,'/').'/';
+		if ( ! file_exists($dir.'composer.json'))
+		{
+			throw new \DomainException('Directory not found.');
+		}
+
+		$this->dir = $dir;
+	}
+
+	/**
+	 * Sets a loader to use the relative
+	 *
+	 * @param \Foolz\Plugin\Loader $loader
+	 * @return \Foolz\Plugin\Plugin
+	 */
+	public function setLoader(\Foolz\Plugin\Loader $loader)
 	{
 		$this->loader = $loader;
-		$this->dir = rtrim($dir,'/').'/';
+		return $this;
 	}
 
 	/**
@@ -90,9 +107,12 @@ class Plugin
 		{
 			$file = $this->getDir().'composer.json';
 
+			// should never happen as we check for composer.json on instantiation
 			if ( ! file_exists($file))
 			{
+				// @codeCoverageIgnoreStart
 				throw new \DomainException;
+				// @codeCoverageIgnoreEnd
 			}
 
 			$this->json_config = json_decode(file_get_contents($file), true);
@@ -175,16 +195,31 @@ class Plugin
 		{
 			unlink($this->getDir().'config.php');
 		}
+
+		$this->clearJsonConfig();
+		$this->clearConfig();
 	}
 
+	/**
+	 * Clears the json_config variable to reload from JSON
+	 *
+	 * @return \Foolz\Plugin\Plugin
+	 */
 	public function clearJsonConfig()
 	{
 		$this->json_config = null;
+		return $this;
 	}
 
+	/**
+	 * Clears the config variable to reload from config.php
+	 *
+	 * @return \Foolz\Plugin\Plugin
+	 */
 	public function clearConfig()
 	{
 		$this->config = null;
+		return $this;
 	}
 
 	/**
@@ -206,10 +241,10 @@ class Plugin
 	public function execute()
 	{
 		// clear the hook since we might have an old one
-		\Foolz\Plugin\Event::clear('foolz\plugin\plugin.execute.'.$this->getJsonConfig('name'));
+		\Foolz\Plugin\Event::clear('foolz\plugin\plugin.execute.'.$this->getConfig('name'));
 
 		$this->bootstrap();
-		\Foolz\Plugin\Hook::forge('foolz\plugin\plugin.execute.'.$this->getJsonConfig('name'))
+		\Foolz\Plugin\Hook::forge('foolz\plugin\plugin.execute.'.$this->getConfig('name'))
 			->setObject($this)
 			->execute();
 
@@ -240,14 +275,14 @@ class Plugin
 	 *
 	 * @return  \Foolz\Plugin\Plugin
 	 */
-	public function remove()
+	public function uninstall()
 	{
 		// clear the hook since we might have an old one
-		\Foolz\Plugin\Event::clear('foolz\plugin\plugin.remove.'.$this->getJsonConfig('name'));
+		\Foolz\Plugin\Event::clear('foolz\plugin\plugin.uninstall.'.$this->getJsonConfig('name'));
 
 		// execute the bootstrap to get the events instantiated
 		$this->bootstrap();
-		\Foolz\Plugin\Hook::forge('foolz\plugin\plugin.remove.'.$this->getJsonConfig('name'))
+		\Foolz\Plugin\Hook::forge('foolz\plugin\plugin.uninstall.'.$this->getJsonConfig('name'))
 			->setObject($this)
 			->execute();
 

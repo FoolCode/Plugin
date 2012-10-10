@@ -1,5 +1,5 @@
 {
-	"name": "foolz/fake_plugin",
+	"name": "foolz/fake",
 	"type": "foolz-plugin",
 	"description": "A fake plugin",
 	"keywords": ["fake", "mock"],
@@ -19,5 +19,9 @@
 		"psr-0": {
 			"Foolz\\Fake" : "classes/"
 		}
+	},
+
+	"extra": {
+		"name": "Fake"
 	}
 }

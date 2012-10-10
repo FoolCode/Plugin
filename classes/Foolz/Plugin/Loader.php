@@ -5,53 +5,53 @@ namespace Foolz\Plugin;
 /**
  * Automates loading of plugins, download and removal
  *
- * @author Foolz <support@foolz.us>
- * @package Foolz\Plugin
- * @license http://www.apache.org/licenses/LICENSE-2.0.html Apache License 2.0
+ * @author   Foolz <support@foolz.us>
+ * @package  Foolz\Plugin
+ * @license  http://www.apache.org/licenses/LICENSE-2.0.html Apache License 2.0
  */
 class Loader
 {
 	/**
 	 * Directory where support directories like cache are located
 	 *
-	 * @var string
+	 * @var  string
 	 */
 	protected static $resource_dir = null;
 
 	/**
-	 * Files to delete on class destruct
-	 *
-	 * @var array
-	 */
-	protected $to_delete = array();
-
-	/**
 	 * The instances of the Loader class
 	 *
-	 * @var array
+	 * @var  array
 	 */
 	protected static $instances = array();
 
 	/**
 	 * The dirs in which to look for plugins
 	 *
-	 * @var null|array
+	 * @var  null|array
 	 */
 	protected $dirs = null;
 
 	/**
 	 * The classes for the autoloader
 	 *
-	 * @var null|array
+	 * @var  null|array
 	 */
 	protected $classes = null;
 
 	/**
 	 * The plugins found
 	 *
-	 * @var null|array as first key the dir name, as second key the slug
+	 * @var  null|array  as first key the dir name, as second key the slug
 	 */
 	protected $plugins = null;
+
+	/**
+	 * Tells if plugins should be reloaded
+	 *
+	 * @var  bool
+	 */
+	protected $plugins_reload = true;
 
 	/**
 	 * Construct registers the class to the autoloader
@@ -69,9 +69,9 @@ class Loader
 	/**
 	 * Creates or returns a named instance of Loader
 	 *
-	 * @param string $instance
-	 * @param bool $prepend if the autoloader should be prepended
-	 * @return \Foolz\Plugin\Loader
+	 * @param   string  $instance
+	 * @param   bool    $prepend   if the autoloader should be prepended
+	 * @return  \Foolz\Plugin\Loader
 	 */
 	public static function forge($instance = 'default', $prepend = false)
 	{
@@ -83,43 +83,17 @@ class Loader
 		return static::$instances[$instance];
 	}
 
-	/**
-	 * Removes the files tagged for deletion
-	 */
-	public function __destruct()
+	public static function destroy($instance = 'default')
 	{
-		foreach ($this->to_delete as $delete)
-		{
-			if ( ! file_exists($delete))
-			{
-				continue;
-			}
-
-			if (is_dir($delete))
-			{
-				$this->flushDir($delete);
-			}
-
-			unlink($delete);
-		}
-	}
-
-	/**
-	 * Sets a file for deletion on object destruct
-	 *
-	 * @param string $path
-	 * @return \Foolz\Plugin\Loader
-	 */
-	protected function setForDeletion($path)
-	{
-		$this->to_delete[] = $path;
-		return $this;
+		$obj = static::$instances[$instance];
+		$obj->unregister();
+		unset(static::$instances[$instance]);
 	}
 
 	/**
 	 * Registers the current object with spl_autoload_register
 	 *
-	 * @param bool $prepend if the class loader should run first, would allow overriding classes
+	 * @param  bool  $prepend  if the class loader should run first, would allow overriding classes
 	 */
 	protected function register($prepend = false)
 	{
@@ -137,9 +111,8 @@ class Loader
 	/**
 	 * Class Autoloader function
 	 *
-	 * @param string $class
-	 * @return void|bool
-	 * @throws \OutOfBoundsException if the class doesn't exist
+	 * @param   string  $class
+	 * @return  void|bool
 	 */
 	public function classLoader($class, $psr = false)
 	{
@@ -153,9 +126,9 @@ class Loader
 	/**
 	 * Adds a class to the autoloader
 	 *
-	 * @param string $class
-	 * @param string
-	 * @return \Foolz\Plugin\Loader
+	 * @param   string  $class
+	 * @param   string
+	 * @return  \Foolz\Plugin\Loader
 	 */
 	public function addClass($class, $path)
 	{
@@ -164,10 +137,21 @@ class Loader
 	}
 
 	/**
+	 * Returns the path of the class
+	 *
+	 * @param   string  $class
+	 * @return  string
+	 */
+	public function getClassPath($class)
+	{
+		return $this->classes[$class];
+	}
+
+	/**
 	 * Removes a class from the autoloader
 	 *
-	 * @param string $class
-	 * @return \Foolz\Plugin\Loader
+	 * @param   string  $class
+	 * @return  \Foolz\Plugin\Loader
 	 */
 	public function removeClass($class)
 	{
@@ -178,8 +162,8 @@ class Loader
 	/**
 	 * Adds a directory to the array of directories to search plugins in
 	 *
-	 * @param string $dir_name if $dir is not set this sets both the name and the dir equal
-	 * @param null|string $dir the dir where to look for plugins
+	 * @param  string       $dir_name  if $dir is not set this sets both the name and the dir equal
+	 * @param  null|string  $dir       the dir where to look for plugins
 	 * @return \Foolz\Plugin\Loader
 	 */
 	public function addDir($dir_name, $dir = null)
@@ -192,22 +176,28 @@ class Loader
 
 		if ( ! is_dir($dir))
 		{
-			throw new \DomainException;
+			throw new \DomainException('Directory not found.');
 		}
 
-		$this->dirs[$dir_name] = $dir;
+		$this->dirs[$dir_name] = rtrim($dir,'/').'/';
+
+		// set the flag to reload plugins on demand
+		$this->plugins_reload = true;
+
 		return $this;
 	}
 
 	/**
 	 * Removes a dir from the array of directories to search plugins in
+	 * Unsets also all the plugins in that directory
 	 *
-	 * @param string $dir_name
-	 * @return \Foolz\Plugin\Loader
+	 * @param   string  $dir_name
+	 * @return  \Foolz\Plugin\Loader
 	 */
 	public function removeDir($dir_name)
 	{
 		unset($this->dirs[$dir_name]);
+		unset($this->plugins[$dir_name]);
 		return $this;
 	}
 
@@ -228,41 +218,59 @@ class Loader
 				$this->plugins[$dir_name] = array();
 			}
 
-			$fp = opendir($dir);
+			$vendor_paths = $this->findDirs($dir);
 
-			while (false !== ($file = readdir($fp)))
+			foreach ($vendor_paths as $vendor_name => $vendor_path)
 			{
-				// Remove '.', '..'
-				if (in_array($file, array('.', '..')))
-				{
-					continue;
-				}
+				$plugin_paths = $this->findDirs($vendor_path);
 
-				$filepath = $dir.'/'.$file;
-
-				if (is_dir($filepath))
+				foreach ($plugin_paths as $plugin_name => $plugin_path)
 				{
-					if ( ! isset($this->plugins[$dir_name][$file]))
+					if ( ! isset($this->plugins[$dir_name][$vendor_name.'/'.$plugin_name]))
 					{
-						$this->plugins[$dir_name][$file] = new \Foolz\Plugin\Plugin($this, $filepath);
+						$plugin = new \Foolz\Plugin\Plugin($plugin_path);
+						$plugin->setLoader($this);
+						$this->plugins[$dir_name][$vendor_name.'/'.$plugin_name] = $plugin;
 					}
 				}
 			}
-
-			closedir($fp);
 		}
+	}
+
+	protected function findDirs($path)
+	{
+		$result = array();
+		$fp = opendir($path);
+
+		while (false !== ($file = readdir($fp)))
+		{
+			// Remove '.', '..'
+			if (in_array($file, array('.', '..')))
+			{
+				continue;
+			}
+
+			if (is_dir($path.'/'.$file))
+			{
+				$result[$file] = $path.'/'.$file;
+			}
+		}
+
+		closedir($fp);
+
+		return $result;
 	}
 
 	/**
 	 * Gets all the plugins or the plugins from the directory
 	 *
-	 * @param null|string $dir_name if specified it gets only a group of plugins
-	 * @return array
-	 * @throws \OutOfBoundsException
+	 * @param   null|string  $dir_name  if specified it gets only a group of plugins
+	 * @return  array
+	 * @throws  \OutOfBoundsException
 	 */
 	public function getPlugins($dir_name = null)
 	{
-		if ($this->plugins === null)
+		if ($this->plugins_reload === true)
 		{
 			$this->findPlugins();
 		}
@@ -274,7 +282,7 @@ class Loader
 
 		if ( ! isset($this->plugins[$dir_name]))
 		{
-			throw new \OutOfBoundsException;
+			throw new \OutOfBoundsException('There is no such a directory.');
 		}
 
 		return $this->plugins[$dir_name];
@@ -283,10 +291,10 @@ class Loader
 	/**
 	 * Gets a single plugin object
 	 *
-	 * @param string $dir_name
-	 * @param string $slug
-	 * @return \Foolz\Plugin\Plugin
-	 * @throws \OutOfBoundsException
+	 * @param   string  $dir_name
+	 * @param   string  $slug
+	 * @return  \Foolz\Plugin\Plugin
+	 * @throws  \OutOfBoundsException
 	 */
 	public function getPlugin($dir_name, $slug)
 	{
@@ -294,126 +302,9 @@ class Loader
 
 		if ( ! isset($plugins[$dir_name][$slug]))
 		{
-			throw new \OutOfBoundsException;
+			throw new \OutOfBoundsException('There is no such a plugin.');
 		}
 
 		return $plugins[$dir_name][$slug];
-	}
-
-
-	public function refreshConfigs()
-	{
-		foreach ($this->getPlugins() as $dir_name => $plugins)
-		{
-			foreach ($plugins as $slug => $plugin)
-			{
-				$plugin->refreshConfig();
-			}
-		}
-	}
-
-	/**
-	 * Fetches a plugin and prepares it for use
-	 *
-	 * @param string $dir_name Named directory in which to put the plugin
-	 * @param string $url Url to wget from
-	 */
-	public function downloadPlugin($dir_name, $slug, $url)
-	{
-		$download = file_get_contents($url);
-
-		// serious things may break if this is 0 length
-		if (strlen($slug) == 0)
-		{
-			throw new \InvalidArgumentException;
-		}
-
-		$base_path = static::$resource_dir.'cache/'.$slug.'/';
-		$this->setForDeletion($base_path);
-
-		if ( ! file_exists($base_path))
-		{
-			mkdir($base_path);
-		}
-
-		file_put_contents($base_path.'plugin.zip', $download);
-
-		$zip = new \ZipArchive();
-		$zip->open($base_path.'plugin.zip');
-		mkdir($base_path.'extracted/');
-		$zip->extractTo($base_path.'extracted/');
-		$zip->close();
-
-		if ( ! file_exists($base_path.'extracted/composer.json'))
-		{
-			throw new \UnexpectedValueException;
-		}
-
-		// use the slug defined in the package to make sure it goes in the correct folder
-		$json = json_decode($base_path.'extracted/composer.json', true);
-
-		if ( ! isset($json['name']))
-		{
-			throw new \UnexpectedValueException;
-		}
-
-		copy($base_path.'extracted/', $this->dirs[$dir_name].$json['name'].DIRECTORY_SEPARATOR);
-
-		$this->flushDir($base_path);
-		unlink($base_path);
-	}
-
-	/**
-	 * Removes the plugin directory. It doesn't uninstall the plugin.
-	 *
-	 * @param string $dir_name Named directory where the plugin is located
-	 * @param type $slug
-	 */
-	public function removePlugin($dir_name, $slug)
-	{
-		$plugin = $this->getPlugin($dir_name, $slug);
-		$this->flushDir($plugin->getDir());
-		unlink($plugin->getDir());
-	}
-
-	/**
-	 * Empties a directory
-	 *
-	 * @param   string  $path
-	 * @return  boolean
-	 *
-	 * @since  2.0.0
-	 */
-	protected function flushDir($path)
-	{
-		$fp = opendir($path);
-
-		while (false !== ($file = readdir($fp)))
-		{
-			// Remove '.', '..'
-			if (in_array($file, array('.', '..')))
-			{
-				continue;
-			}
-
-			$filepath = $path.'/'.$file;
-
-			if (is_dir($filepath))
-			{
-				$this->flushDir($filepath);
-
-				// removing dir here won't remove the root dir, just as we want it
-				rmdir($filepath);
-				continue;
-			}
-			else if (is_file($filepath))
-			{
-				unlink($filepath);
-			}
-		}
-
-		closedir($fp);
-
-		return true;
 	}
 }

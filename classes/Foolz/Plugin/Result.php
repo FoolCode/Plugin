@@ -89,7 +89,7 @@ class Result
 	{
 		if ($this->object === null)
 		{
-			throw new \OutOfBoundsException;
+			throw new \OutOfBoundsException('No object has been set.');
 		}
 
 		return $this->object;
@@ -125,15 +125,15 @@ class Result
 		{
 			if ( ! isset($this->params_original[$key]))
 			{
-				throw new \OutOfBoundsException;
+				throw new \OutOfBoundsException('Undefined original parameter.');
 			}
 
 			return $this->params_original[$key];
 		}
 
-		if ( ! isset($this->params_original[$key]))
+		if ( ! isset($this->params[$key]))
 		{
-			throw new \OutOfBoundsException;
+			throw new \OutOfBoundsException('Undefined parameter.');
 		}
 
 		return $this->params[$key];

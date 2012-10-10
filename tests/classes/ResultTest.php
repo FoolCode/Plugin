@@ -28,6 +28,12 @@ class ResultTest extends PHPUnit_Framework_TestCase
 		$new->getObject();
 	}
 
+	public function testSetGetFallback()
+	{
+		$new = new Result();
+		$this->assertSame('blabla', $new->get('blabla'));
+	}
+
 	public function testSetGetParam()
 	{
 		$arr = array('param1' => 'test', 'param2' => 'testtest');

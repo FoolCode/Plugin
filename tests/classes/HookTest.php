@@ -52,4 +52,61 @@ class HookTest extends PHPUnit_Framework_TestCase
 		$this->assertSame(2, $result->getParam('num'));
 		$this->assertSame(2, $result->get());
 	}
+
+	public function testConstructArray()
+	{
+		$ev = new Event(array('easycore1', 'easycore2'));
+		$ev->setCall(function($result){
+			$num = $result->getParam('num');
+			$num++;
+			$result->setParam('num', $num);
+			$result->set($num);
+		});
+
+		$result1 = Hook::forge('easycore1')
+			->setParam('num', 0)
+			->execute()
+			->get(0);
+
+		$result2 = Hook::forge('easycore2')
+			->setParam('num', 0)
+			->execute()
+			->get(0);
+
+		$this->assertSame(1, $result1);
+		$this->assertSame(1, $result2);
+	}
+
+	public function testDisable()
+	{
+		\Foolz\Plugin\Hook::disable('disable.me');
+
+		\Foolz\Plugin\Event::forge('disable.me')
+			->setCall(function($result) {
+				$result->setParam('result', 'unexpected');
+			});
+
+		$result = \Foolz\Plugin\Hook::forge('disable.me')
+			->setParam('result', 'expected')
+			->execute();
+
+		$this->assertSame('expected', $result->getParam('result'));
+	}
+
+	public function testEnable()
+	{
+		\Foolz\Plugin\Hook::disable('disable.me2');
+		\Foolz\Plugin\Hook::enable('disable.me2');
+
+		\Foolz\Plugin\Event::forge('disable.me2')
+			->setCall(function($result) {
+				$result->setParam('result', 'expected');
+			});
+
+		$result = \Foolz\Plugin\Hook::forge('disable.me2')
+			->setParam('result', 'unexpected')
+			->execute();
+
+		$this->assertSame('expected', $result->getParam('result'));
+	}
 }

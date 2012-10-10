@@ -1,0 +1,27 @@
+ureghuregh{
+	"name": "foolz/broken_json",
+	"type": "foolz-plugin",
+	"description": "A fake plugin",
+	"keywords": ["fake", "mock"],
+	"homepage": "http://www.foolz.us",
+	"license": "Apache-2.0",
+	"authors": [{"name": "foolz", "email": "support@foolz.us"}],
+	"support": {
+		"email": "support@foolz.us",
+		"irc": "irc://irc.irchighway.net/fooldriver"
+	},
+
+	"require" : {
+		"foolz/plugin": "dev"
+	},
+
+	"autoload": {
+		"psr-0": {
+			"Foolz\\Fake" : "classes/"
+		}
+	},
+
+	"extra": {
+		"name": "Fake"
+	}
+}
