@@ -184,7 +184,7 @@ Full example:
 
 Don't get fooled by the order. Hook creates `$result` first, passes it to the Event. The Event modifies the `$result`. It then goes back to the Hook, that returns it to you.
 
-#### _->get($fallback = \Foolz\Plugin\Void)_
+#### ->get($fallback = \Foolz\Plugin\Void)
 
 Returns the result.
 
@@ -192,7 +192,7 @@ __Returns:__ _mixed_ - The result that has been set. The fallback if no result h
 
 __Notice:__ Void is useful to recognize `null` as a valid result from an Event.
 
-#### _->set($val)_
+#### ->set($val)
 
 Sets the result.
 
@@ -200,14 +200,14 @@ Sets the result.
 
 _Chainable_
 
-#### _->getParam($key, $orig = false)_
+#### ->getParam($key, $orig = false)
 
 Gets the parameter.
 
 * int|string _$key_ - The key that was given to the parameter
 * bool _$orig_ - If true eturns the first assigned value of the parameter
 
-#### _->setParam($key, $value)_
+#### ->setParam($key, $value)
 
 Sets a parameter.
 
@@ -216,13 +216,13 @@ Sets a parameter.
 
 _Chainable_
 
-#### _->getParams($orig = false)_
+#### ->getParams($orig = false)
 
 Returns the array of parameters.
 
 * bool _$orig_ - If true returns the first assigned values of the parameters
 
-#### _->setParams($array)_
+#### ->setParams($array)
 
 Sets several parameters.
 
