@@ -32,8 +32,8 @@ Some examples follow.
 
 You can go in-depth with these explanations with the following pages:
 
-* [Hooks, Events and Results](blob/master/hooks_events_results.md)
-* [Plugin packages](blob/master/plugin_packages.md)
+* [Hooks, Events and Results](Plugin/blob/master/hooks_events_results.md)
+* [Plugin packages](Plugin/blob/master/plugin_packages.md)
 
 ## Hooks and Events
 
@@ -61,7 +61,7 @@ echo $result->get();
 
 We coded the result package to avoid confusion with cascading Events. This is why Events only get one parameter, that we use to call `$result`.
 
-As this is where most of the mistakes are made, like fetching parameters that haven't been set, any unset parameter fetched or unset result without explicit fallback will cause an exception.
+As this is where most of the mistakes are made, any unset parameter or unset result without explicit fallback will cause an exception.
 
 Example:
 ```php
