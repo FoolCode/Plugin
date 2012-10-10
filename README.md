@@ -10,19 +10,33 @@ You will need PHP 5.3 for this to work. You can install it through composer.
 ## Components
 
 * __Hooks__
+
 	Place them in your code to execute events. Unlike several other packages, these Hooks allow interacting with the data and returning new values.
+
 * __Events__
+
 	The events happen when a Hook with the same key is encountered. Events accept static methods and Closures, as well as a priority, because _you can stack them and have them passing variables to each other_.
+
 * __Result__
+
 	The object that Hooks and Events share, and return. They keep your code clean from mysterious function parameters and even more confusing return values.
+
 * __Plugin__
+
 	The internal package handler. _Plugins are actually Composer packages._ Use the bootstrap file to create new events and use the install/uninstall/upgrade system. Read the composer file with the config functions.
+
 * __Loader__
-	The packages utility. It looks into the folders you tell it to, finds plugins, loads them and gives you the array.
+
+	The packages utility. It looks into the folders you tell it to, finds plugins, loads them and give you the arrays.
 
 What will you have to do? You must use the Loader class to create your own administration panel and run the plugins you choose to run. Since it doesn't have any database bind (or any dependency at all), you must create an enabled/disabled system yourself.
 
 Some examples follow.
+
+You can go in-depth with these explanations with the following pages:
+
+	* [Hooks, Events and Results](blob/master/hooks_events_results.md)
+	* [Plugin packages](blob/master/plugin_packages.md)
 
 ## Hooks and Events
 

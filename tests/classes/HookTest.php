@@ -77,6 +77,33 @@ class HookTest extends PHPUnit_Framework_TestCase
 		$this->assertSame(1, $result2);
 	}
 
+	public function testObjectInheritance()
+	{
+		$class = new \stdClass();
+		$class->value = 'success';
+
+		Event::forge('objecttests')
+			->setCall(function($result) {
+				// over PHP 5.4 we can use $this
+				if(version_compare(phpversion(), '5.4.0') >= 0)
+				{
+					$result->set($this->value);
+				}
+				else
+				{
+					$obj = $result->getObject();
+					$result->set($obj->value);
+				}
+			});
+
+		$result = Hook::forge('objecttests')
+			->setObject($class)
+			->execute()
+			->get('failure');
+
+		$this->assertSame('success', $result);
+	}
+
 	public function testDisable()
 	{
 		\Foolz\Plugin\Hook::disable('disable.me');
