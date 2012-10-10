@@ -6,11 +6,11 @@ As we already have Hooks and Events, we can freely use them in the plugins. We'r
 
 ## Structure
 
-Plugins are composed by at least two files: `composer.json` and `bootstrap.php`. A third file may be automatically created for performance purposes, called `composer.php` containing the `composer.json` data. Therefore, beside `composer.json`, `composer.php` and `bootstrap.php`, you can use the plugin package folder for anything.
+Plugins are composed by at least two files: `composer.json` and `bootstrap.php`. A third file may be automatically created for performance purposes, called `composer.php` containing the `composer.json` data. You can use the directory for anything else.
 
 You will be able to choose multiple named directories stores the plugins. In general, this is the structure: `plugins_folder/vendor_name/plugin_name` In example, one of our plugins would be in `plugins/foolz/fake`.
 
-#### composer.json
+### composer.json
 
 In example: `plugins_folder/vendor_name/plugin_name/composer.json`
 
@@ -26,7 +26,7 @@ What we care about is the [structure of the composer.json file](http://getcompos
 
 This allows setting a revision, used for database migrations. It's not compulsory to add this line to the composer.json, only add it when you need migrations. Use the `extra` section of `composer.json` to set your own plugin data. The Plugin class will be able to read that data.
 
-#### bootstrap.php
+### bootstrap.php
 
 In example: `plugins_folder/vendor_name/plugin_name/bootstrap.php`
 
