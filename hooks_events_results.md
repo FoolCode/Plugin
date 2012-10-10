@@ -68,7 +68,9 @@ Runs the Events on the hook.
 
 __Returns:__ _\Foolz\Plugin\Result_ - A Result object filtered by the events.
 
+
 ----
+
 
 ## Event
 
@@ -147,14 +149,83 @@ Sets the Closure or string to static method to call
 
 * string|Callable _$callable_ - Closure or string to static method to call
 
+__PHP 5.4 Enhancement:__ If on the Hook you used `->setObject($object)`, Closures will have the object set to `$this` and be in the object's scope.
 
 
+----
 
 
+## Result
 
+The result is an object to modify during the Events. The Hook will return the Result filtered by the Events.
 
+Full example:
+```php
+<?php
+	Event::forge('yet_another_hook')
+		->setCall(function($result){
+			$this_param = $result->getParam('this_param');
+			$result->setParam('another_param', 'You are not here anymore.')
+			$result->set($this_param);
+		});
 
+	$result = Hook::forge('yet_another_hook')
+		->setParam('this_param', 'Nothing to see here.')
+		->setParam('another_param', 'I am still here.')
+		->execute();
 
+	// echoes "Nothing to see here."
+	echo $result->get('Your fallback');
+	// echoes "You are not here anymore."
+	echo $result->getParam('another_param');
+	// uses the original parameter, and echoes "I am still here."
+	echo $result->getParam('another_param', true);
+```
 
+Don't get fooled by the order. Hook creates `$result` first, passes it to the Event. The Event modifies the `$result`. It then goes back to the Hook, that returns it to you.
 
+#### _->get($fallback = \Foolz\Plugin\Void)_
 
+Returns the result.
+
+__Returns:__ _mixed_ - The result that has been set. The fallback if no result has been set. \Foolz\Plugin\Void if no result or fallback has been set.
+
+__Notice:__ Void is useful to recognize `null` as a valid result from an Event.
+
+#### _->set($val)_
+
+Sets the result.
+
+* mixed _$val_ - Any value to be set as result
+
+_Chainable_
+
+#### _->getParam($key, $orig = false)_
+
+Gets the parameter.
+
+* int|string _$key_ - The key that was given to the parameter
+* bool _$orig_ - If true eturns the first assigned value of the parameter
+
+#### _->setParam($key, $value)_
+
+Sets a parameter.
+
+* int|string _$key_ - The key to give to the value
+* mixed _$value_ - The value to assign to the parameter
+
+_Chainable_
+
+#### _->getParams($orig = false)_
+
+Returns the array of parameters.
+
+* bool _$orig_ - If true returns the first assigned values of the parameters
+
+#### _->setParams($array)_
+
+Sets several parameters.
+
+* array _$array_ - An array of $key => $value
+
+_Chainable_

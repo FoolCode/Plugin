@@ -50,6 +50,15 @@ class ResultTest extends PHPUnit_Framework_TestCase
 		$this->assertSame('test1', $new->getParam('param1'));
 	}
 
+	public function testSetGetParams()
+	{
+		$arr = array('param1' => 'test', 'param2' => 'testtest');
+		$new = new Result();
+		$new->setParams($arr);
+
+		$this->assertSame($arr, $new->getParams());
+	}
+
 	/**
 	 * @expectedException \OutOfBoundsException
 	 */

@@ -151,4 +151,19 @@ class Result
 		$this->params[$key] = $value;
 		return $this;
 	}
+
+	/**
+	 * Updates several parameters
+	 *
+	 * @param   array  $array  Array with as keys the parameter key and as value the parameter value
+	 * @return  \Foolz\Plugin\Result
+	 */
+	public function setParams($array)
+	{
+		foreach ($array as $key => $item)
+		{
+			$this->params[$key] = $item;
+		}
+		return $this;
+	}
 }
