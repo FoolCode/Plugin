@@ -153,7 +153,7 @@ class Plugin
 	{
 		$config = $this->getJsonConfig();
 
-		Util::saveArrayToFile($this->getDir().'config.php', $config);
+		Util::saveArrayToFile($this->getDir().'composer.php', $config);
 		return $this;
 	}
 
@@ -169,7 +169,7 @@ class Plugin
 	{
 		if ($this->config === null)
 		{
-			$php_file = $this->getDir().'config.php';
+			$php_file = $this->getDir().'composer.php';
 
 			if (file_exists($php_file) === false)
 			{
@@ -194,15 +194,15 @@ class Plugin
 	}
 
 	/**
-	 * Destroys the config.php to recreate it from the composer.json
+	 * Destroys the composer.php to recreate it from the composer.json
 	 *
 	 * @return  \Foolz\Plugin\Plugin
 	 */
 	public function refreshConfig()
 	{
-		if (file_exists($this->getDir().'config.php'))
+		if (file_exists($this->getDir().'composer.php'))
 		{
-			unlink($this->getDir().'config.php');
+			unlink($this->getDir().'composer.php');
 		}
 
 		$this->clearJsonConfig();
@@ -222,7 +222,7 @@ class Plugin
 	}
 
 	/**
-	 * Clears the config variable to reload from config.php
+	 * Clears the config variable to reload from composer.php
 	 *
 	 * @return  \Foolz\Plugin\Plugin
 	 */

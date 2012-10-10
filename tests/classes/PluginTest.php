@@ -7,9 +7,9 @@ class PluginTest extends PHPUnit_Framework_TestCase
 {
 	public function unlinkConfig()
 	{
-		if (file_exists(__DIR__.'/../../tests/mock/foolz/fake/config.php'))
+		if (file_exists(__DIR__.'/../../tests/mock/foolz/fake/composer.php'))
 		{
-			unlink(__DIR__.'/../../tests/mock/foolz/fake/config.php');
+			unlink(__DIR__.'/../../tests/mock/foolz/fake/composer.php');
 		}
 	}
 
@@ -137,7 +137,7 @@ class PluginTest extends PHPUnit_Framework_TestCase
 		$plugin->getConfig();
 
 		$plugin->refreshConfig();
-		$this->assertFalse(file_exists(__DIR__.'/../../tests/mock/foolz/fake/config.php'));
+		$this->assertFalse(file_exists(__DIR__.'/../../tests/mock/foolz/fake/composer.php'));
 		$this->unlinkConfig();
 	}
 
