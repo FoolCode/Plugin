@@ -3,7 +3,7 @@ Foolz PHP Plugin system
 
 A very complete plugin system to let you claim that your application supports plugins!
 
-You will need PHP 5.3 for this to work. You can install it through composer.
+You will need PHP 5.3 for this to work. You can install it through [Composer](http://getcomposer.org/) and [Packagist](https://packagist.org/packages/foolz/plugin).
 
 [![Build Status](https://secure.travis-ci.org/FoolRulez/Plugin.png)](http://travis-ci.org/FoolRulez/Plugin)
 
@@ -11,19 +11,16 @@ You will need PHP 5.3 for this to work. You can install it through composer.
 
 * __Hooks__
 
-	Place them in your code to execute events. Unlike several other packages, these Hooks allow interacting with the data and returning new values.
-
+	Place them in your code to execute events. Unlike several other packages, these Hooks allow interacting with the data and can hold the scope of the class.
 * __Events__
 
 	The events happen when a Hook with the same key is encountered. Events accept static methods and Closures, as well as a priority, because _you can stack them and have them passing variables to each other_.
-
 * __Result__
 
 	The object that Hooks and Events share, and return. They keep your code clean from mysterious function parameters and even more confusing return values.
-
 * __Plugin__
 
-	The internal package handler. _Plugins are actually Composer packages._ Use the bootstrap file to create new events and use the install/uninstall/upgrade system. Read the composer file with the config functions.
+	The internal package handler. _Plugins are actually Composer packages._ Use the bootstrap file to create new events and use the install/uninstall/upgrade hooks.
 
 * __Loader__
 
@@ -35,8 +32,8 @@ Some examples follow.
 
 You can go in-depth with these explanations with the following pages:
 
-	* [Hooks, Events and Results](blob/master/hooks_events_results.md)
-	* [Plugin packages](blob/master/plugin_packages.md)
+* [Hooks, Events and Results](blob/master/hooks_events_results.md)
+* [Plugin packages](blob/master/plugin_packages.md)
 
 ## Hooks and Events
 
