@@ -14,9 +14,7 @@ You will be able to choose multiple named directories stores the plugins. In gen
 
 In example: `plugins_folder/vendor_name/plugin_name/composer.json`
 
-While not yet possible to install the plugins through Composer (we're working on it!) you can already give it a composer-compatible structure.
-
-What we care about is the [structure of the composer.json file](http://getcomposer.org/doc/04-schema.md): it contains all that we need to describe a package. We make one single addition to improve functionality:
+You can describe the plugin with the [structure of the composer.json file](http://getcomposer.org/doc/04-schema.md): it contains all that we need to describe a package. We make one single addition to improve functionality:
 
 	{
 		"extra" : {
@@ -34,7 +32,6 @@ This will be run every time you `execute()` the plugin. If you have a plugin cal
 
 ```php
 <?php
-
 	// execute
 	\Event::forge('\foolz\plugin\plugin.execute.foolz/fake')
 		->setCall(function($result){
@@ -70,6 +67,72 @@ At the time of writing this, the package doesn't support PSR-0 loading. You can 
 
 The __install__ event is meant to migrate to the latest revision of the database and file schema. Keep the install always to the latest version so it doesn't require migrations. The __upgrade__ event gets two parameters: `old_revision` and `new_revision`. You can use these to determine which migration actions the plugin should take. The __uninstall__ event is meant to revert the changes made by the plugin to the system.
 
+## Loader
+
+This class gives easy access to the arrays of plugins.
+
+#### new Loader()
+
+Instantiation.
+
+#### Loader::forge($instance = 'default')
+
+Creates or returns an instance of Loader.
+
+* string _$instance_ - The name of the instance
+
+_Chainable_
+
+#### Loader::destroy($instance = 'default')
+
+Destroys an instance
+
+* string _$instance_ - The name of the instance
+
+#### ->addDir($dir_name, $dir = null)
+
+Sets a named director where to look for the plugins.
+
+* string _$dir\_name_ - An unique name for the directory. If only this is declared it should be the path. $dir_name and $dir will then be the same.
+* string _$dir_ - The path to the plugin folder
+
+_Chainable_
+
+#### ->removeDir($dir_name)
+
+Removes a dir in which plugins are looked into and unsets all the plugins loaded from that dir
+
+* string _$dir\_name - The named dir to remove
+
+#### ->getPlugins($dir_name = null)
+
+Returns all the plugins.
+
+* string _$dir\_name_ - If set it will only return the plugins from the named directory
+
+__Returns:__ an associative array of \Foolz\Plugin\Plugin with the dir name as first key and the plugin name as second. Only the plugin name as key if the dir name is set.
+
+#### ->getPlugin($dir_name, $slug)
+
+Returns the plugin.
+
+* string _$dir\_name_ - The named dir where the plugin is found
+* string _$slug_ - The name of the plugin
+
+
+----
+
+
+## Plugin
+
+#### ->addClass($class, $path)
+
+Sets a class path for the autoloader.
+
+* string _$class_ - The class name
+* string _$path_ - The path to the class
+
+#### ->remove
 
 
 
