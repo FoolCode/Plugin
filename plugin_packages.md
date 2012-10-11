@@ -8,7 +8,7 @@ As we already have Hooks and Events, we can freely use them in the plugins. We'r
 
 Plugins are composed by at least two files: `composer.json` and `bootstrap.php`. A third file may be automatically created for performance purposes, called `composer.php` containing the `composer.json` data. You can use the directory for anything else.
 
-You will be able to choose multiple named directories stores the plugins. In general, this is the structure: `plugins_folder/vendor_name/plugin_name` In example, one of our plugins would be in `plugins/foolz/fake`.
+You will be able to choose multiple named directories to store the plugins. In general, this is the structure: `plugins_folder/vendor_name/plugin_name` In example, one of our plugins would be in `plugins/foolz/fake`.
 
 ### composer.json
 

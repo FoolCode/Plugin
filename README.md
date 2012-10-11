@@ -96,18 +96,7 @@ echo $result->getParam('increment');
 
 ## Plugins
 
-The folder structure must be: `plugins_folder/vendor_name/plugin_name`.
-
-A plugin is made of at least one file: the composer.json file. That is right: __the configuration file is a composer.json file__. You can add any extra information you need in the [extra fields](http://getcomposer.org/doc/04-schema.md#extra), like in example a pretty `name` for the plugin.
-
-The other file you really want is the `bootstrap.php` file. In the bootstrap you will have four events to add:
-
-* `\foolz\plugin\plugin.execute.vendor_name/plugin_name`
-* `\foolz\plugin\plugin.install.vendor_name/plugin_name`
-* `\foolz\plugin\plugin.uninstall.vendor_name/plugin_name`
-* `\foolz\plugin\plugin.update.vendor_name/plugin_name`
-
-The last one sets two parameters: `old_revision` and `new_revision`. These are based on the eventual `extra.revision`, and should be used to manage migrations.
+We have two classes for dealing with plugin packages: Plugin and Loader.
 
 Here's an example of how would you load the plugins you choose to run:
 
@@ -126,3 +115,5 @@ foreach ($loader->getPlugins('main') as $plugin)
 	}
 }
 ```
+
+Get more info about [plugins](Plugin/blob/master/plugin_packages.md).
