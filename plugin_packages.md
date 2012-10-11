@@ -102,7 +102,9 @@ _Chainable_
 
 Removes a dir in which plugins are looked into and unsets all the plugins loaded from that dir
 
-* string _$dir\_name - The named dir to remove
+* string _$dir\_name_ - The named dir to remove
+
+_Chainable_
 
 #### ->getPlugins($dir_name = null)
 
@@ -110,7 +112,7 @@ Returns all the plugins.
 
 * string _$dir\_name_ - If set it will only return the plugins from the named directory
 
-__Returns:__ an associative array of \Foolz\Plugin\Plugin with the dir name as first key and the plugin name as second. Only the plugin name as key if the dir name is set.
+__Returns:__ _array_ - an associative array of \Foolz\Plugin\Plugin with the dir name as first key and the plugin name as second. Only the plugin name as key if the dir name is set.
 
 #### ->getPlugin($dir_name, $slug)
 
@@ -119,11 +121,21 @@ Returns the plugin.
 * string _$dir\_name_ - The named dir where the plugin is found
 * string _$slug_ - The name of the plugin
 
+__Returns:__ _\Foolz\Plugin\Plugin_ - The selected plugin
+
 
 ----
 
 
 ## Plugin
+
+Each plugin is handled with a Plugin object.
+
+#### ->getDir()
+
+Returns the path to the directory where the plugin is located.
+
+__Returns:__ _string_ the path to the plugin directory
 
 #### ->addClass($class, $path)
 
@@ -132,13 +144,52 @@ Sets a class path for the autoloader.
 * string _$class_ - The class name
 * string _$path_ - The path to the class
 
-#### ->remove
+_Chainable_
 
+#### ->removeClass($class)
 
+Removes the class from the autoloading array.
 
+* string _$class_ - The class name
 
+_Chainable_
 
+#### ->getConfig($section = null, $fallback = \Foolz\Plugin\Void)
 
+Gets the configuration array or just a section.
+
+* null|string _section_ - An eventual string with arrays keys separated by dots
+* mixed _$fallback_  A fallback if the key is not found
+
+__Throws:__ _\DomainException_ - if the fallback was still \Foolz\Plugin\Void and the key was not found
+
+#### ->getJsonConfig($section = null, $fallback = \Foolz\Plugin\Void)
+
+Works as `->getConfig()` but retrieves the data from the JSON file, therefore slower.
+
+_See: `->getConfig()`_
+
+#### ->execute()
+
+Loads the `bootstrap.php` file and executes the event `foolz\plugin\plugin.execute.vendor_name/plugin_name`.
+
+#### ->install()
+
+Loads the `bootstrap.php` file and executes the event `foolz\plugin\plugin.install.vendor_name/plugin_name`.
+
+This method supposes that the original plugin files are already in place.
+
+#### ->uninstall()
+
+Loads the `bootstrap.php` file and executes the event `foolz\plugin\plugin.uninstall.vendor_name/plugin_name`.
+
+This method won't remove your plugin directory, only uninstall it with your Event.
+
+#### ->upgrade()
+
+Loads the `bootstrap.php` file and executes the event `foolz\plugin\plugin.upgrade.vendor_name/plugin_name`.
+
+This method should be run after you updated the files. __You must leave the composer.php file in place to be able to have the plugin determine the revision__. It will be updated by this method when the upgrade is done.
 
 
 
