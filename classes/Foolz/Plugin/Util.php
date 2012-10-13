@@ -51,7 +51,6 @@ class Util
 	 *
 	 * @param   string  $path   The target path
 	 * @param   array   $array  The array to save
-	 * @return  \Foolz\Plugin\Plugin
 	 */
 	public static function saveArrayToFile($path, $array)
 	{
