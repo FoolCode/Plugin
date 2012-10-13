@@ -3,7 +3,7 @@
 namespace Foolz\Plugin;
 
 /**
- * Automates loading of plugins, download and removal
+ * Automates loading of plugins
  *
  * @author   Foolz <support@foolz.us>
  * @package  Foolz\Plugin
@@ -11,13 +11,6 @@ namespace Foolz\Plugin;
  */
 class Loader
 {
-	/**
-	 * Directory where support directories like cache are located
-	 *
-	 * @var  string
-	 */
-	protected static $resource_dir = null;
-
 	/**
 	 * The instances of the Loader class
 	 *
@@ -51,18 +44,13 @@ class Loader
 	 *
 	 * @var  bool
 	 */
-	protected $plugins_reload = true;
+	protected $reload = true;
 
 	/**
 	 * Construct registers the class to the autoloader
 	 */
 	public function __construct()
 	{
-		if (static::$resource_dir === null)
-		{
-			static::$resource_dir = __DIR__.'/../../../resources/cache/';
-		}
-
 		$this->register();
 	}
 
@@ -188,7 +176,7 @@ class Loader
 		$this->dirs[$dir_name] = rtrim($dir,'/').'/';
 
 		// set the flag to reload plugins on demand
-		$this->plugins_reload = true;
+		$this->reload = true;
 
 		return $this;
 	}
@@ -210,7 +198,7 @@ class Loader
 	/**
 	 * Looks for plugins in the specified directories and creates the objects
 	 */
-	public function findPlugins()
+	public function find()
 	{
 		if ($this->plugins === null)
 		{
@@ -280,11 +268,11 @@ class Loader
 	 * @return  array
 	 * @throws  \OutOfBoundsException  if there isn't such a $dir_name set
 	 */
-	public function getPlugins($dir_name = null)
+	public function getAll($dir_name = null)
 	{
-		if ($this->plugins_reload === true)
+		if ($this->reload === true)
 		{
-			$this->findPlugins();
+			$this->find();
 		}
 
 		if ($dir_name === null)
@@ -305,15 +293,23 @@ class Loader
 	 *
 	 * @param   string  $dir_name
 	 * @param   string  $slug
-	 * @return  \Foolz\Plugin\Plugin
-	 * @throws  \OutOfBoundsException  if the plugin doesn't exist
+	 * @param   string  $fallback  The fallback theme if the first is not found
+	 * @param   string  $fallback_dir_name  The dir name of the fallback if it's in another directory
+	 * @return  \Foolz\Theme\Theme
+	 * @throws  \OutOfBoundsException  if the theme doesn't exist and if the fallback wasn't found either
 	 */
-	public function getPlugin($dir_name, $slug)
+	public function get($dir_name, $slug, $fallback = null, $fallback_dir_name = null)
 	{
-		$plugins = $this->getPlugins();
+		$plugins = $this->getAll();
 
 		if ( ! isset($plugins[$dir_name][$slug]))
 		{
+			if (func_num_args() >= 3)
+			{
+				$this->get($fallback_dir_name !== null ? $fallback_dir_name : $dir_name, $fallback);
+				return;
+			}
+
 			throw new \OutOfBoundsException('There is no such a plugin.');
 		}
 
