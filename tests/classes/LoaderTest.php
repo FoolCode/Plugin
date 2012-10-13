@@ -56,7 +56,7 @@ class LoaderTest extends PHPUnit_Framework_TestCase
 		$new = Loader::forge('default');
 		$dir = __DIR__.'/../../tests/mock/';
 		$new->addDir($dir);
-		$array = $new->getPlugins();
+		$array = $new->getAll();
 		$this->assertArrayHasKey($dir, $array);
 		$this->assertArrayHasKey('foolz/fake', $array[$dir]);
 	}
@@ -65,7 +65,7 @@ class LoaderTest extends PHPUnit_Framework_TestCase
 	{
 		$new = Loader::forge('default');
 		$new->addDir('test', __DIR__.'/../../tests/mock/');
-		$array = $new->getPlugins();
+		$array = $new->getAll();
 		$this->assertArrayHasKey('test', $array);
 		$this->assertArrayHasKey('foolz/fake', $array['test']);
 	}
@@ -74,9 +74,9 @@ class LoaderTest extends PHPUnit_Framework_TestCase
 	{
 		$new = Loader::forge('default');
 		$new->addDir('test', __DIR__.'/../../tests/mock/');
-		$new->getPlugins();
+		$new->getAll();
 		$new->removeDir('test');
-		$array = $new->getPlugins();
+		$array = $new->getAll();
 		$this->assertArrayNotHasKey('test', $array);
 	}
 
@@ -87,14 +87,14 @@ class LoaderTest extends PHPUnit_Framework_TestCase
 	{
 		$new = Loader::forge('default');
 		$new->addDir('test', __DIR__.'/../../tests/mock/');
-		$new->getPlugins('trest');
+		$new->getAll('trest');
 	}
 
 	public function testGetPluginsKey()
 	{
 		$new = Loader::forge('default');
 		$new->addDir('test', __DIR__.'/../../tests/mock/');
-		$array = $new->getPlugins('test');
+		$array = $new->getAll('test');
 		$this->assertArrayHasKey('foolz/fake', $array);
 	}
 
@@ -102,7 +102,7 @@ class LoaderTest extends PHPUnit_Framework_TestCase
 	{
 		$new = Loader::forge('default');
 		$new->addDir('test', __DIR__.'/../../tests/mock/');
-		$plugin = $new->getPlugin('test', 'foolz/fake');
+		$plugin = $new->get('test', 'foolz/fake');
 		$this->assertInstanceOf('Foolz\Plugin\Plugin', $plugin);
 	}
 
@@ -113,6 +113,6 @@ class LoaderTest extends PHPUnit_Framework_TestCase
 	{
 		$new = Loader::forge('default');
 		$new->addDir('test', __DIR__.'/../../tests/mock/');
-		$plugin = $new->getPlugin('test', 'foolz/faker');
+		$plugin = $new->get('test', 'foolz/faker');
 	}
 }
