@@ -14,9 +14,9 @@ class Loader
 	/**
 	 * The instances of the Loader class
 	 *
-	 * @var  array
+	 * @var  \Foolz\Plugin\Loader[]
 	 */
-	protected static $instances = array();
+	protected static $instances = [];
 
 	/**
 	 * The dirs in which to look for plugins
@@ -42,7 +42,7 @@ class Loader
 	/**
 	 * Tells if plugins should be reloaded
 	 *
-	 * @var  bool
+	 * @var  boolean
 	 */
 	protected $reload = true;
 
@@ -57,8 +57,9 @@ class Loader
 	/**
 	 * Creates or returns a named instance of Loader
 	 *
-	 * @param   string  $instance
-	 * @param   bool    $prepend   if the autoloader should be prepended
+	 * @param   string  $instance  The name of the instance to use or create
+	 * @param   bool    $prepend   If the autoloader should be prepended
+	 *
 	 * @return  \Foolz\Plugin\Loader
 	 */
 	public static function forge($instance = 'default', $prepend = false)
@@ -74,7 +75,7 @@ class Loader
 	/**
 	 * Destroys a named instance and unregisters its autoloader
 	 *
-	 * @param  string  $instance
+	 * @param  string  $instance  The name of the instance to use or create
 	 */
 	public static function destroy($instance = 'default')
 	{
@@ -90,7 +91,7 @@ class Loader
 	 */
 	protected function register($prepend = false)
 	{
-		spl_autoload_register(array($this, 'classLoader'), true, $prepend);
+		spl_autoload_register([$this, 'classLoader'], true, $prepend);
 	}
 
 	/**
@@ -98,14 +99,15 @@ class Loader
 	 */
 	protected function unregister()
 	{
-		spl_autoload_unregister(array($this, 'classLoader'));
+		spl_autoload_unregister([$this, 'classLoader']);
 	}
 
 	/**
 	 * Class Autoloader function
 	 *
-	 * @param   string  $class
-	 * @return  void|bool
+	 * @param   string  $class  The name of the class to load
+	 *
+	 * @return  void|boolean  True if the class has been found, void otherwise
 	 */
 	public function classLoader($class, $psr = false)
 	{
@@ -119,9 +121,10 @@ class Loader
 	/**
 	 * Adds a class to the autoloader
 	 *
-	 * @param   string  $class
-	 * @param   string
-	 * @return  \Foolz\Plugin\Loader
+	 * @param   string  $class  The name of the class
+	 * @param   string  $path   The path where the class can be found
+	 *
+	 * @return  \Foolz\Plugin\Loader  The current object
 	 */
 	public function addClass($class, $path)
 	{
@@ -132,19 +135,27 @@ class Loader
 	/**
 	 * Returns the path of the class
 	 *
-	 * @param   string  $class
-	 * @return  string
+	 * @param   string  $class  The name of the class
+	 *
+	 * @return  string  The path to the class
+	 * @throws  \OverflowException  If the class hasn't been declared
 	 */
 	public function getClassPath($class)
 	{
+		if ( ! isset($this->classes[$class]))
+		{
+			throw new \OverflowException;
+		}
+
 		return $this->classes[$class];
 	}
 
 	/**
 	 * Removes a class from the autoloader
 	 *
-	 * @param   string  $class
-	 * @return  \Foolz\Plugin\Loader
+	 * @param   string  $class  The class to remove
+	 *
+	 * @return  \Foolz\Plugin\Loader  The current object
 	 */
 	public function removeClass($class)
 	{
@@ -155,10 +166,11 @@ class Loader
 	/**
 	 * Adds a directory to the array of directories to search plugins in
 	 *
-	 * @param   string       $dir_name  if $dir is not set this sets both the name and the dir equal
-	 * @param   null|string  $dir       the dir where to look for plugins
-	 * @return  \Foolz\Plugin\Loader
-	 * @throws  \DomainException  if the directory is not found
+	 * @param   string       $dir_name  If $dir is not set this sets both the name and the dir equal
+	 * @param   null|string  $dir       The dir where to look for plugins
+	 *
+	 * @return  \Foolz\Plugin\Loader  The current object
+	 * @throws  \DomainException      If the directory is not found
 	 */
 	public function addDir($dir_name, $dir = null)
 	{
@@ -185,7 +197,8 @@ class Loader
 	 * Removes a dir from the array of directories to search plugins in
 	 * Unsets also all the plugins in that directory
 	 *
-	 * @param   string  $dir_name
+	 * @param   string  $dir_name  The named directory
+	 *
 	 * @return  \Foolz\Plugin\Loader
 	 */
 	public function removeDir($dir_name)
@@ -209,7 +222,7 @@ class Loader
 		{
 			if ( ! isset($this->plugins[$dir_name]))
 			{
-				$this->plugins[$dir_name] = array();
+				$this->plugins[$dir_name] = [];
 			}
 
 			$vendor_paths = $this->findDirs($dir);
@@ -222,7 +235,7 @@ class Loader
 				{
 					if ( ! isset($this->plugins[$dir_name][$vendor_name.'/'.$plugin_name]))
 					{
-						$plugin = new \Foolz\Plugin\Plugin($plugin_path);
+						$plugin = new Plugin($plugin_path);
 						$plugin->setLoader($this);
 						$this->plugins[$dir_name][$vendor_name.'/'.$plugin_name] = $plugin;
 					}
@@ -234,8 +247,9 @@ class Loader
 	/**
 	 * Internal function to find all directories at the path
 	 *
-	 * @param   string  $path
-	 * @return  array   the paths with as they the last part of the path
+	 * @param   string  $path  The path to look into
+	 *
+	 * @return  array   The paths with as they the last part of the path
 	 */
 	protected function findDirs($path)
 	{
@@ -265,8 +279,9 @@ class Loader
 	 * Gets all the plugins or the plugins from the directory
 	 *
 	 * @param   null|string  $dir_name  if specified it gets only a group of plugins
-	 * @return  array
-	 * @throws  \OutOfBoundsException  if there isn't such a $dir_name set
+	 *
+	 * @return  \Foolz\Plugin\Plugin[]  All the plugins or the plugins in the directory
+	 * @throws  \OutOfBoundsException   If there isn't such a $dir_name set
 	 */
 	public function getAll($dir_name = null)
 	{
@@ -291,11 +306,12 @@ class Loader
 	/**
 	 * Gets a single plugin object
 	 *
-	 * @param   string  $dir_name
-	 * @param   string  $slug
-	 * @param   string  $fallback  The fallback theme if the first is not found
+	 * @param   string  $dir_name           The directory name where to find the plugin
+	 * @param   string  $slug               The slug of the plugin
+	 * @param   string  $fallback           The fallback theme if the first is not found
 	 * @param   string  $fallback_dir_name  The dir name of the fallback if it's in another directory
-	 * @return  \Foolz\Theme\Theme
+	 *
+	 * @return  \Foolz\Plugin\Plugin
 	 * @throws  \OutOfBoundsException  if the theme doesn't exist and if the fallback wasn't found either
 	 */
 	public function get($dir_name, $slug, $fallback = null, $fallback_dir_name = null)

@@ -3,7 +3,7 @@ Foolz PHP Plugin system
 
 A very complete plugin system to let you claim that your application supports plugins!
 
-You will need PHP 5.3 for this to work. You can install it through [Composer](http://getcomposer.org/) and [Packagist](https://packagist.org/packages/foolz/plugin).
+You will need PHP 5.4 for this to work. You can install it through [Composer](http://getcomposer.org/) and [Packagist](https://packagist.org/packages/foolz/plugin).
 
 [![Build Status](https://secure.travis-ci.org/FoolRulez/Plugin.png)](http://travis-ci.org/FoolRulez/Plugin)
 
@@ -25,6 +25,10 @@ You will need PHP 5.3 for this to work. You can install it through [Composer](ht
 * __Loader__
 
 	The packages utility. It looks into the folders you tell it to, finds plugins, loads them and give you the arrays.
+
+* __PlugSuit__ (trait)
+
+	Add plugins automatically to your classes. It adds a before and after hook, and lets you override the parameters passed to the methods.
 
 What will you have to do? You must use the Loader class to create your own administration panel and run the plugins you choose to run. Since it doesn't have any database bind (or any dependency at all), you must create an enabled/disabled system yourself.
 
