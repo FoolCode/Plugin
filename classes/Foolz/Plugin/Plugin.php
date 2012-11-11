@@ -19,6 +19,13 @@ class Plugin
 	protected $loader;
 
 	/**
+	 * The name given to the dir to recall it from the loader
+	 *
+	 * @var type
+	 */
+	protected $dir_name;
+
+	/**
 	 * The path to this plugin
 	 *
 	 * @var string
@@ -75,6 +82,26 @@ class Plugin
 	public function getLoader()
 	{
 		return $this->loader;
+	}
+
+	/**
+	 * Sets the dir_name used in the loader to get this plugin
+	 *
+	 * @param  string  $dir_name
+	 */
+	public function setDirName($dir_name)
+	{
+		$this->dir_name = $dir_name;
+	}
+
+	/**
+	 * Returns the dir_name used in the loader to get this plugin
+	 *
+	 * @return  string
+	 */
+	public function getDirName()
+	{
+		return $this->dir_name;
 	}
 
 	/**
@@ -251,10 +278,10 @@ class Plugin
 	public function execute()
 	{
 		// clear the hook since we might have an old one
-		\Foolz\Plugin\Event::clear(strtolower(get_class()).'.execute.'.$this->getConfig('name'));
+		\Foolz\Plugin\Event::clear(get_class().'::execute.'.$this->getConfig('name'));
 
 		$this->bootstrap();
-		\Foolz\Plugin\Hook::forge(strtolower(get_class()).'.execute.'.$this->getConfig('name'))
+		\Foolz\Plugin\Hook::forge(get_class().'::execute.'.$this->getConfig('name'))
 			->setObject($this)
 			->execute();
 
@@ -269,11 +296,11 @@ class Plugin
 	public function install()
 	{
 		// clear the hook since we might have an old one
-		\Foolz\Plugin\Event::clear(strtolower(get_class()).'.install.'.$this->getJsonConfig('name'));
+		\Foolz\Plugin\Event::clear(get_class().'::install.'.$this->getJsonConfig('name'));
 
 		// execute the bootstrap to get the events instantiated
 		$this->bootstrap();
-		\Foolz\Plugin\Hook::forge(strtolower(get_class()).'.install.'.$this->getJsonConfig('name'))
+		\Foolz\Plugin\Hook::forge(get_class().'::install.'.$this->getJsonConfig('name'))
 			->setObject($this)
 			->execute();
 
@@ -288,11 +315,11 @@ class Plugin
 	public function uninstall()
 	{
 		// clear the hook since we might have an old one
-		\Foolz\Plugin\Event::clear(strtolower(get_class()).'uninstall.'.$this->getJsonConfig('name'));
+		\Foolz\Plugin\Event::clear(get_class().'::uninstall.'.$this->getJsonConfig('name'));
 
 		// execute the bootstrap to get the events instantiated
 		$this->bootstrap();
-		\Foolz\Plugin\Hook::forge(strtolower(get_class()).'.uninstall.'.$this->getJsonConfig('name'))
+		\Foolz\Plugin\Hook::forge(get_class().'::uninstall.'.$this->getJsonConfig('name'))
 			->setObject($this)
 			->execute();
 
@@ -312,13 +339,13 @@ class Plugin
 		$this->clearJsonConfig();
 
 		// clear the hook since we for sure have an old one
-		\Foolz\Plugin\Event::clear(strtolower(get_class()).'.upgrade.'.$this->getJsonConfig('name'));
+		\Foolz\Plugin\Event::clear(get_class().'::upgrade.'.$this->getJsonConfig('name'));
 
 		// execute the bootstrap to get the events re-instantiated
 		$this->bootstrap();
 
 		// run the event
-		\Foolz\Plugin\Hook::forge(strtolower(get_class()).'.upgrade.'.$this->getJsonConfig('name'))
+		\Foolz\Plugin\Hook::forge(get_class().'::upgrade.'.$this->getJsonConfig('name'))
 			->setObject($this)
 			// the PHP config holds the old revision
 			->setParam('old_revision', $this->getConfig('extra.revision', 0))

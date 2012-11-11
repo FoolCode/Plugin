@@ -16,14 +16,14 @@ class Result
 	 *
 	 * @var  array  Array with as keys the parameter key
 	 */
-	protected $params = array();
+	protected $params = [];
 
 	/**
 	 * The original parameters (can't be modified)
 	 *
 	 * @var  array  Array with as key the parameter key
 	 */
-	protected $params_original = array();
+	protected $params_original = [];
 
 	/**
 	 * The object in which the Hook runs
@@ -50,6 +50,20 @@ class Result
 		$this->params = $this->params_original = $params;
 		$this->object = $object;
 		$this->result = new Void();
+	}
+
+	/**
+	 * Resets the object to the initial state
+	 *
+	 * @return  \Foolz\Plugin\Result  The current object
+	 */
+	public function reset()
+	{
+		$this->params = [];
+		$this->params_original = [];
+		$this->object = null;
+		$this->result = null;
+		return $this;
 	}
 
 	/**

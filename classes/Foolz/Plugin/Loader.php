@@ -237,6 +237,7 @@ class Loader
 					{
 						$plugin = new Plugin($plugin_path);
 						$plugin->setLoader($this);
+						$plugin->setDirName($dir_name);
 						$this->plugins[$dir_name][$vendor_name.'/'.$plugin_name] = $plugin;
 					}
 				}
@@ -308,27 +309,20 @@ class Loader
 	 *
 	 * @param   string  $dir_name           The directory name where to find the plugin
 	 * @param   string  $slug               The slug of the plugin
-	 * @param   string  $fallback           The fallback theme if the first is not found
-	 * @param   string  $fallback_dir_name  The dir name of the fallback if it's in another directory
 	 *
 	 * @return  \Foolz\Plugin\Plugin
-	 * @throws  \OutOfBoundsException  if the theme doesn't exist and if the fallback wasn't found either
+	 * @throws  \OutOfBoundsException  if the plugin doesn't exist
 	 */
-	public function get($dir_name, $slug, $fallback = null, $fallback_dir_name = null)
+	public function get($dir_name, $slug)
 	{
 		$plugins = $this->getAll();
 
 		if ( ! isset($plugins[$dir_name][$slug]))
 		{
-			if (func_num_args() >= 3)
-			{
-				$this->get($fallback_dir_name !== null ? $fallback_dir_name : $dir_name, $fallback);
-				return;
-			}
-
 			throw new \OutOfBoundsException('There is no such a plugin.');
 		}
 
+		$plugins[$dir_name][$slug]->setDirName($dir_name);
 		return $plugins[$dir_name][$slug];
 	}
 }
