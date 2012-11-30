@@ -12,3 +12,4 @@ nbproject
 
 fuel/app/logs/*/*/*
 fuel/app/cache/*/*
+/composer.lock

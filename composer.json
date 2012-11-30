@@ -11,10 +11,8 @@
         "irc": "irc://irc.irchighway.net/fooldriver"
     },
     "require": {
-        "php": ">=5.3.0"
-    },
-    "suggest": {
-        "fuel/core": "Integrates perfectly as a FuelPHP 1.x package"
+        "php": ">=5.4.0",
+		"foolz/package": "dev-master"
     },
     "autoload": {
         "psr-0": {
