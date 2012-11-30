@@ -8,7 +8,7 @@ notifications:
     - woxxy@foolrulez.org
 
 before_script:
-  - composer install
+  - composer install --verbose
   - cd tests
 
 script: phpunit --configuration phpunit.xml --coverage-text
