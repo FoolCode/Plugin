@@ -44,18 +44,6 @@ class PluginTest extends PHPUnit_Framework_TestCase
 		$this->assertSame(__DIR__.'/../../tests/mock/foolz/fake/', $plugin->getDir());
 	}
 
-	public function testAddClass()
-	{
-		$plugin = new Plugin(__DIR__.'/../../tests/mock/foolz/fake/');
-		$plugin->setLoader(Loader::forge());
-		$plugin->addClass('Foolz\Fake\Fake', __DIR__.'/../../tests/mock/foolz/fake/classes/Foolz/Fake/Fake.php');
-		$path = $plugin->getLoader()->getClassPath('Foolz\Fake\Fake');
-		$this->assertSame(__DIR__.'/../../tests/mock/foolz/fake/classes/Foolz/Fake/Fake.php', $path);
-
-		// clean up
-		$path = $plugin->getLoader()->removeClass('Foolz\Fake\Fake');
-	}
-
 	public function testGetJsonConfig()
 	{
 		$plugin = new Plugin(__DIR__.'/../../tests/mock/foolz/fake/');
