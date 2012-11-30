@@ -8,6 +8,7 @@ notifications:
     - woxxy@foolrulez.org
 
 before_script:
+  - php composer.phar install
   - cd tests
 
 script: phpunit --configuration phpunit.xml --coverage-text
