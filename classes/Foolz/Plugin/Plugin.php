@@ -12,6 +12,20 @@ namespace Foolz\Plugin;
 class Plugin extends \Foolz\Package\Package
 {
 	/**
+	 * Returns an AssetManager object to deal with the assets
+	 *
+	 * @return  \Foolz\Plugin\AssetManager  A new instance of the AssetManager
+	 */
+	public function getAssetManager()
+	{
+		if ($this->asset_manager !== null)
+		{
+			return $this->asset_manager;
+		}
+		return $this->asset_manager = new AssetManager($this);
+	}
+
+	/**
 	 * Runs the execution block
 	 *
 	 * @return  \Foolz\Plugin\Plugin
