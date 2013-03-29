@@ -8,8 +8,7 @@ notifications:
     - woxxy@foolrulez.org
 
 before_script:
-  - curl -s http://getcomposer.org/installer | php
-  - php composer.phar install --dev
+  - composer install --dev
   - cd tests
 
 script: phpunit --configuration phpunit.xml --coverage-text
