@@ -4,7 +4,7 @@ namespace Foolz\Plugin;
 
 /**
  * Allows adding plugin hooks for before and after with ease, change input parameters, override methods
- * 
+ *
  * @author   Foolz <support@foolz.us>
  * @package  Foolz\Plugin
  * @license  http://www.apache.org/licenses/LICENSE-2.0.html Apache License 2.0
@@ -26,7 +26,9 @@ trait PlugSuit
 			throw new \BadMethodCallException('Method "'.$name.'" does not exist in "'.$class.'".');
 		}
 
-		$before = Hook::forge($class.'.'.$name.'.call.before')
+		var_dump($class);
+
+		$before = Hook::forge($class.'::'.$name.'.call.before.method')
 			->setObject($this)
 			->setParams($parameters)
 			->execute();
@@ -67,7 +69,7 @@ trait PlugSuit
 		}
 
 		// in the after, the last parameter passed will be the result
-		$after = \Foolz\Plugin\Hook::forge($class.'.'.$name.'.call.after')
+		$after = \Foolz\Plugin\Hook::forge($class.'::'.$name.'.call.after.method')
 			->setParams($parameters)
 			->execute();
 
