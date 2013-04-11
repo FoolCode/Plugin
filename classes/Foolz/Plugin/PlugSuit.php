@@ -26,8 +26,6 @@ trait PlugSuit
 			throw new \BadMethodCallException('Method "'.$name.'" does not exist in "'.$class.'".');
 		}
 
-		var_dump($class);
-
 		$before = Hook::forge($class.'::'.$name.'.call.before.method')
 			->setObject($this)
 			->setParams($parameters)
