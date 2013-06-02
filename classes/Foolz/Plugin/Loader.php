@@ -30,27 +30,24 @@ class Loader extends \Foolz\Package\Loader
 	/**
 	 * Gets all the plugins or the plugins from the directory
 	 *
-	 * @param   null|string  $dir_name  if specified it gets only a group of plugins
-	 *
 	 * @return  \Foolz\Plugin\Plugin[]  All the plugins or the plugins in the directory
 	 * @throws  \OutOfBoundsException   If there isn't such a $dir_name set
 	 */
-	public function getAll($dir_name = null)
+	public function getAll()
 	{
-		return parent::getAll($dir_name);
+		return parent::getAll();
 	}
 
 	/**
 	 * Gets a single plugin object
 	 *
-	 * @param   string  $dir_name           The directory name where to find the plugin
 	 * @param   string  $slug               The slug of the plugin
 	 *
 	 * @return  \Foolz\Plugin\Plugin
 	 * @throws  \OutOfBoundsException  if the plugin doesn't exist
 	 */
-	public function get($dir_name, $slug)
+	public function get($slug)
 	{
-		return parent::get($dir_name, $slug);
+		return parent::get($slug);
 	}
 }
