@@ -142,7 +142,7 @@ class Hook
 			$call = $event->getCall();
 
 			// if we set an object, the call is a closure and the PHP version is at least 5.4...
-			if ($this->object !== null && $call instanceof \Closure && version_compare(PHP_VERSION, '5.4.0') >= 0)
+			if ($this->object !== null && $call instanceof \Closure && version_compare(PHP_VERSION, '5.4.0') >= 0 && !defined('HHVM_VERSION'))
 			{
 				// ...bind the Closure's $this to the object
 				$call = $call->bindTo($this->object, $this->object);
