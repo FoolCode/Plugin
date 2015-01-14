@@ -26,7 +26,7 @@ trait PlugSuit
 			throw new \BadMethodCallException('Method "'.$name.'" does not exist in "'.$class.'".');
 		}
 
-		$before = Hook::forge($class.'::'.$name.'.call.before.method')
+		$before = Hook::forge($class.'::'.$name.'#call.beforeMethod')
 			->setObject($this)
 			->setParams($parameters)
 			->execute();
@@ -67,7 +67,7 @@ trait PlugSuit
 		}
 
 		// in the after, the last parameter passed will be the result
-		$after = \Foolz\Plugin\Hook::forge($class.'::'.$name.'.call.after.method')
+		$after = \Foolz\Plugin\Hook::forge($class.'::'.$name.'#call.afterMethod')
 			->setParams($parameters)
 			->execute();
 
@@ -94,7 +94,7 @@ trait PlugSuit
 			throw new \BadMethodCallException('Static method "'.$name.'" does not exist in "'.$class.'".');
 		}
 
-		$before = \Foolz\Plugin\Hook::forge($class.'.'.$name.'.call.before')
+		$before = \Foolz\Plugin\Hook::forge($class.'.'.$name.'#call.before')
 			->setParams($parameters)
 			->execute();
 
@@ -135,7 +135,7 @@ trait PlugSuit
 		}
 
 		// in the after, the last parameter passed will be the result
-		$after = \Foolz\Plugin\Hook::forge($class.'.'.$name.'.call.after')
+		$after = \Foolz\Plugin\Hook::forge($class.'.'.$name.'#call.after')
 			->setParams($parameters)
 			->execute();
 
