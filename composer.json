@@ -12,11 +12,11 @@
     },
     "require": {
         "php": ">=5.4.0",
-		"foolz/package": "dev-master"
+        "foolz/package": "dev-master"
     },
     "autoload": {
-        "psr-0": {
-            "Foolz\\Plugin": "classes/"
+        "psr-4": {
+            "Foolz\\Plugin\\": "src/"
         }
     }
 }
