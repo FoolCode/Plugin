@@ -111,9 +111,9 @@ $loader = Loader::forge()->setDir('main', '/path/to/plugins/');
 
 $enabled_plugins = array('foolz/fake', 'foolz/kynet');
 
-foreach ($loader->getPlugins('main') as $plugin))
+foreach ($loader->getPlugins('main') as $plugin)
 {
-	if (in_array($plugin->getConfig('name'), $enabled_plugins)
+	if (in_array($plugin->getConfig('name'), $enabled_plugins))
 	{
 		$plugin->execute();
 	}
