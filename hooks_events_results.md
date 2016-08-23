@@ -205,7 +205,7 @@ _Chainable_
 Gets the parameter.
 
 * int|string _$key_ - The key that was given to the parameter
-* bool _$orig_ - If true eturns the first assigned value of the parameter
+* bool _$orig_ - If true returns the first assigned value of the parameter
 
 #### ->setParam($key, $value)
 
