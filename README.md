@@ -36,8 +36,8 @@ Some examples follow.
 
 You can go in-depth with these explanations with the following pages:
 
-* [Hooks, Events and Results](Plugin/blob/master/hooks_events_results.md)
-* [Plugin packages](Plugin/blob/master/plugin_packages.md)
+* [Hooks, Events and Results](hooks_events_results.md)
+* [Plugin packages](plugin_packages.md)
 
 ## Hooks and Events
 
@@ -113,11 +113,11 @@ $enabled_plugins = array('foolz/fake', 'foolz/kynet');
 
 foreach ($loader->getPlugins('main') as $plugin)
 {
-	if (in_array($plugin->getConfig('name'), $enabled_plugins)
+	if (in_array($plugin->getConfig('name'), $enabled_plugins))
 	{
 		$plugin->execute();
 	}
 }
 ```
 
-Get more info about [plugins](Plugin/blob/master/plugin_packages.md).
+Get more info about [plugins](plugin_packages.md).
